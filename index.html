@@ -2,201 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Card Draw</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Draw App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
+      background: #f4f4f4;
       margin: 0;
       padding: 20px;
-      background: #f4f4f9;
-      color: #333;
     }
     h1 {
       margin-bottom: 20px;
     }
-    .btn {
-      padding: 15px 25px;
-      font-size: 18px;
+    button {
+      padding: 10px 20px;
       margin: 10px;
+      font-size: 16px;
       cursor: pointer;
+    }
+    #result img {
+      display: block;
+      margin: 10px auto;
+      max-width: 150px;
       border-radius: 8px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-    }
-    .btn:hover {
-      background-color: #45a049;
-    }
-    #result {
-      font-size: 20px;
-      margin: 20px 0;
-      font-weight: bold;
-    }
-    #status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #666;
-    }
-    .card-display {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-    .card {
-      text-align: center;
-    }
-    .card img {
-      width: 150px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     #history {
-      margin-top: 30px;
-      max-width: 500px;
+      margin-top: 20px;
+      text-align: left;
+      max-width: 400px;
       margin-left: auto;
       margin-right: auto;
       background: white;
       padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    #history h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     #history ul {
       list-style: none;
       padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
     }
     #history li {
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 16px;
+      margin: 10px 0;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
     }
     #history img {
       width: 40px;
       vertical-align: middle;
+      border-radius: 4px;
       margin-left: 5px;
-    }
-    @media (max-width: 600px) {
-      .btn {
-        width: 90%;
-        font-size: 20px;
-      }
-      .card img {
-        width: 120px;
-      }
     }
   </style>
 </head>
 <body>
-  <h1>🎴 Card Draw</h1>
-
-  <button class="btn" onclick="drawCards()">Draw Cards</button>
-  <button class="btn" onclick="manualShuffle()">🔄 Shuffle Decks</button>
-  <button class="btn" onclick="exportHistory()">📁 Export History</button>
+  <h1>🎴 Arc & Vib Card Draw</h1>
+  <button onclick="drawPair()">Draw Cards</button>
+  <button onclick="shuffleDecks()">🔄 Shuffle</button>
+  <button onclick="exportHistory()">📁 Export History</button>
 
   <div id="result"></div>
-  <p id="status"></p>
 
   <div id="history">
-    <h2>📜 History of Draws</h2>
+    <h2>History</h2>
     <ul id="historyList"></ul>
   </div>
 
   <script>
-    // Full decks (replace file names with your own if needed)
+    // Full decks
     const fullArcDeck = [
-      { name: "Arc of Fire", image: "images/arc1.png" },
-      { name: "Arc of Water", image: "images/arc2.png" },
-      { name: "Arc of Earth", image: "images/arc3.png" },
-      { name: "Arc of Air", image: "images/arc4.png" },
-      { name: "Arc of Spirit", image: "images/arc5.png" },
-      { name: "Arc of Shadow", image: "images/arc6.png" },
-      { name: "Arc of Light", image: "images/arc7.png" },
-      { name: "Arc of Time", image: "images/arc8.png" },
-      { name: "Arc of Wisdom", image: "images/arc9.png" },
-      { name: "Arc of Strength", image: "images/arc10.png" },
-      { name: "Arc of Healing", image: "images/arc11.png" },
-      { name: "Arc of Fate", image: "images/arc12.png" }
+      { name: "Arc 1", image: "images/arc1.png" },
+      { name: "Arc 2", image: "images/arc2.png" },
+      { name: "Arc 3", image: "images/arc3.png" },
+      { name: "Arc 4", image: "images/arc4.png" },
+      { name: "Arc 5", image: "images/arc5.png" },
+      { name: "Arc 6", image: "images/arc6.png" },
+      { name: "Arc 7", image: "images/arc7.png" },
+      { name: "Arc 8", image: "images/arc8.png" },
+      { name: "Arc 9", image: "images/arc9.png" },
+      { name: "Arc 10", image: "images/arc10.png" },
+      { name: "Arc 11", image: "images/arc11.png" },
+      { name: "Arc 12", image: "images/arc12.png" }
     ];
 
     const fullVibDeck = [
-      { name: "Vib of Joy", image: "images/vib1.png" },
-      { name: "Vib of Peace", image: "images/vib2.png" },
-      { name: "Vib of Energy", image: "images/vib3.png" },
-      { name: "Vib of Balance", image: "images/vib4.png" },
-      { name: "Vib of Love", image: "images/vib5.png" }
+      { name: "Vib 1", image: "images/vib1.png" },
+      { name: "Vib 2", image: "images/vib2.png" },
+      { name: "Vib 3", image: "images/vib3.png" },
+      { name: "Vib 4", image: "images/vib4.png" },
+      { name: "Vib 5", image: "images/vib5.png" }
     ];
 
+    // Current decks
     let arcDeck = [...fullArcDeck];
     let vibDeck = [...fullVibDeck];
     let history = [];
 
-    function drawCards() {
-      if (arcDeck.length === 0) {
-        arcDeck = [...fullArcDeck];
-        alert("🔄 Arc deck reshuffled!");
-      }
-      if (vibDeck.length === 0) {
-        vibDeck = [...fullVibDeck];
-        alert("🔄 Vib deck reshuffled!");
+    function drawPair() {
+      if (arcDeck.length === 0 || vibDeck.length === 0) {
+        alert("Decks empty! Shuffle to continue.");
+        return;
       }
 
-      // Pick and remove Arc
       const arcIndex = Math.floor(Math.random() * arcDeck.length);
-      const arc = arcDeck.splice(arcIndex, 1)[0];
-
-      // Pick and remove Vib
       const vibIndex = Math.floor(Math.random() * vibDeck.length);
+
+      const arc = arcDeck.splice(arcIndex, 1)[0];
       const vib = vibDeck.splice(vibIndex, 1)[0];
+
+      // Show result
+      document.getElementById("result").innerHTML = `
+        <h3>${arc.name}</h3>
+        <img src="${arc.image}" alt="${arc.name}">
+        <h3>${vib.name}</h3>
+        <img src="${vib.image}" alt="${vib.name}">
+      `;
 
       // Save to history
       history.push({ arc, vib });
-
-      // Show result with images
-      document.getElementById("result").innerHTML = `
-        <div class="card-display">
-          <div class="card">
-            <h3>${arc.name}</h3>
-            <img src="${arc.image}" alt="${arc.name}">
-          </div>
-          <div class="card">
-            <h3>${vib.name}</h3>
-            <img src="${vib.image}" alt="${vib.name}">
-          </div>
-        </div>
-      `;
-
-      // Update remaining counts
-      document.getElementById("status").innerText =
-        `Remaining → Arc: ${arcDeck.length} | Vib: ${vibDeck.length}`;
-
-      // Update history list
       updateHistory();
     }
 
-    function manualShuffle() {
+    function shuffleDecks() {
       arcDeck = [...fullArcDeck];
       vibDeck = [...fullVibDeck];
-      alert("🔄 Both decks reshuffled!");
-      document.getElementById("status").innerText =
-        `Remaining → Arc: ${arcDeck.length} | Vib: ${vibDeck.length}`;
+      alert("Decks reshuffled!");
     }
 
     function updateHistory() {
       const list = document.getElementById("historyList");
       list.innerHTML = "";
-      history.slice().reverse().forEach(draw => {
+      history.forEach((draw, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
+          <strong>Draw ${index + 1}:</strong>
           ${draw.arc.name} <img src="${draw.arc.image}">
           | ${draw.vib.name} <img src="${draw.vib.image}">
         `;
@@ -205,21 +145,20 @@
     }
 
     function exportHistory() {
-      if (history.length === 0) {
-        alert("No draws to export yet!");
-        return;
-      }
-      let csvContent = "data:text/csv;charset=utf-8,Arc,Vib\n";
+      let text = "Arc,Vib\n";
       history.forEach(draw => {
-        csvContent += `"${draw.arc.name}","${draw.vib.name}"\n`;
+        text += `${draw.arc.name},${draw.vib.name}\n`;
       });
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "card_draw_history.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+
+      const blob = new Blob([text], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "history.csv";
+      a.click();
+
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>
