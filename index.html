@@ -1,151 +1,160 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tirage de Cartes Arc & Vib</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f0f0f0;
-      padding: 20px;
-    }
-    h1 { margin-bottom: 20px; }
-    #drawButton {
-      padding: 10px 20px;
-      font-size: 18px;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
-    #cardImage {
-      max-width: 300px;
-      margin: 10px auto;
-      cursor: pointer;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    #history {
-      margin-top: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-    }
-    /* Modal */
-    #modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-    }
-    #modalContent {
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 700px;
-      border-radius: 10px;
-      text-align: left;
-      overflow-y: auto;
-      max-height: 80%;
-    }
-    #closeModal {
-      float: right;
-      font-size: 24px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tirage de Cartes Arc & Vib</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 20px;
+}
+button {
+    padding: 15px 25px;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 8px;
+}
+#cardContainer {
+    margin-top: 20px;
+}
+#cardContainer img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+}
+#modal {
+    display: none;
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+#modalContent {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    text-align: left;
+}
+#modal img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+.closeModal {
+    float: right;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+}
+</style>
 </head>
 <body>
 
 <h1>Tirage de Cartes Arc & Vib</h1>
-<button id="drawButton">🎴 Tirer une carte</button>
-<div>
-  <img id="cardImage" src="" alt="Carte tirée">
-</div>
-<div id="history">
-  <h3>Historique :</h3>
-  <ul id="historyList"></ul>
-</div>
+<button id="drawArc">Tirer une carte Arc</button>
+<button id="drawVib">Tirer une carte Vib</button>
+<button id="reshuffle">Reshuffle</button>
 
-<!-- Modal -->
+<div id="cardContainer"></div>
+
 <div id="modal">
-  <div id="modalContent">
-    <span id="closeModal">&times;</span>
-    <div id="cardDescription"></div>
-  </div>
+    <div id="modalContent">
+        <span class="closeModal">&times;</span>
+        <img id="modalImage" src="" alt="Carte">
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+    </div>
 </div>
 
 <script>
-  // Définition des cartes Arc et Vib avec image et description
-  const cards = [
-    // Cartes Arc
-    {id:'arc1', type:'Arc', image:'images/arc1.png', description:`🛡️ Michaël – Guerrier céleste tribal
-Nom : Mikhaël — “Qui est comme Dieu ?”
-Fréquence : 528Hz, Pierres : Lapis-lazuli, Sodalite, Tourmaline noire, Astres : Soleil, Mars...`},
-    {id:'arc2', type:'Arc', image:'images/arc2.png', description:`🌿 Raphaël – Chamane guérisseur végétal
-Nom : Refael — “Dieu guérit”
-Fréquence : 639Hz, Pierres : Malachite, Émeraude, Fluorite verte...`},
-    // ... ajouter arc3 à arc12 de la même façon
-    // Cartes Vib
-    {id:'vib1', type:'Vib', image:'images/vib1.png', description:`🛡️ Carte de Protection
-Fonction : Dissout les intrusions, stabilise l'aura
-Fréquence : 417Hz, Pierres : Obsidienne, Tourmaline noire, Hématite...`},
-    {id:'vib2', type:'Vib', image:'images/vib2.png', description:`🌿 Carte de Guérison
-Fonction : Libère les mémoires, harmonise les corps subtils
-Fréquence : 528Hz, Pierres : Malachite, Chrysoprase, Fluorite verte...`},
-    {id:'vib3', type:'Vib', image:'images/vib3.png', description:`🧭 Carte de Guidance
-Fonction : Active l’intuition et éclaire les choix
-Fréquence : 852Hz, Pierres : Labradorite, Lapis-lazuli, Apatite bleue...`},
-    {id:'vib4', type:'Vib', image:'images/vib4.png', description:`💗 Carte d’Amour
-Fonction : Dissout les blocages affectifs, relie à la source
-Fréquence : 639Hz, Pierres : Quartz rose, Kunzite, Rhodonite...`},
-    {id:'vib5', type:'Vib', image:'images/vib5.png', description:`🦉 Carte de Sagesse
-Fonction : Accès aux plans supérieurs, intégration des enseignements
-Fréquence : 963Hz, Pierres : Améthyste, Sodalite, Cristal de roche...`}
-  ];
-
-  // Gestion du tirage sans répétition
-  let deck = [...cards];
-  const historyList = document.getElementById('historyList');
-  const cardImage = document.getElementById('cardImage');
-  const cardDescription = document.getElementById('cardDescription');
-  const modal = document.getElementById('modal');
-  const closeModal = document.getElementById('closeModal');
-
-  function drawCard() {
-    if(deck.length === 0) {
-      alert('Le deck est vide. Le tirage sera réinitialisé.');
-      deck = [...cards];
-      historyList.innerHTML = '';
-    }
-    const randomIndex = Math.floor(Math.random() * deck.length);
-    const card = deck.splice(randomIndex,1)[0];
-    cardImage.src = card.image;
-    cardImage.alt = card.id;
-    cardDescription.textContent = card.description;
-
-    // Ajouter à l'historique
-    const li = document.createElement('li');
-    li.textContent = `${card.type} - ${card.id}`;
-    historyList.appendChild(li);
-  }
-
-  document.getElementById('drawButton').addEventListener('click', drawCard);
-
-  // Modal click
-  cardImage.addEventListener('click', () => {
-    if(cardImage.src) modal.style.display = 'block';
-  });
-  closeModal.addEventListener('click', () => modal.style.display = 'none');
-  window.addEventListener('click', e => { if(e.target==modal) modal.style.display='none'; });
-
-</script>
-</body>
-</html>
+// --- Cartes Arc ---
+const arcCards = [
+{ name:"🛡️ Michaël – Guerrier céleste tribal", image:"arc1.png", description:`🔤 Nom : Mikhaël (hébreu מִיכָאֵל) — “Qui est comme Dieu ?”
+🌈 Fréquence vibratoire : 528 Hz
+💎 Pierres associées : Lapis-lazuli, Sodalite, Tourmaline noire
+🌞 Astres régents : Soleil, Mars
+🪬 Symboles : épée flamboyante, bouclier solaire, balance cosmique, cape étoilée
+🧭 Rôle : Protecteur des justes
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Saint Michel, Mikael, Melek Mika’il` },
+{ name:"🌿 Raphaël – Chamane guérisseur végétal", image:"arc2.png", description:`🔤 Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit”
+🌈 Fréquence vibratoire : 639 Hz
+💎 Pierres associées : Malachite, Émeraude, Fluorite verte
+🌠 Astres régents : Mercure, Vénus
+🪬 Symboles : bâton de soin, temple de jade, tatouages floraux, lumière verte
+🧭 Rôle : Guérisseur divin, protecteur des voyageurs
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Rufa’il, Israfil` },
+{ name:"🌙 Gabriel – Messager d’eau et de lune", image:"arc3.png", description:`🔤 Nom : Gavri’el (hébreu גַּבְרִיאֵל) — “Force de Dieu”
+🌈 Fréquence vibratoire : 741 Hz
+💎 Pierres associées : Pierre de lune, Citrine, Cornaline
+🌠 Astres régents : Lune, Neptune
+🪬 Symboles : harpe lunaire, perles marines, coquillages vibrants, robe nacrée
+🧭 Rôle : Messager divin
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Djibril, Gavriel, Jibril` },
+{ name:"🔥 Uriel – Alchimiste du feu cosmique", image:"arc4.png", description:`🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu” ou “Feu de Dieu”
+🌈 Fréquence vibratoire : 852 Hz
+💎 Pierres associées : Ambre, Pyrite, Hématite
+🌠 Astres régents : Uranus, Soleil
+🪬 Symboles : sphère incandescente, forge céleste, gants dorés, glyphes alchimiques
+🧭 Rôle : Porteur de sagesse divine
+📜 Traditions : Christianisme ésotérique, Apocryphes, Occultisme
+🧿 Noms associés : Nuriel, Phanuel, Suriel, Sariel, Auriel` },
+{ name:"🌸 Chamuel – Gardien du jardin sacré", image:"arc5.png", description:`🔤 Nom : Chamuel, Camael, Kamael — “Celui qui voit Dieu”
+🌈 Fréquence vibratoire : 639 Hz
+💎 Pierres associées : Quartz rose, Rhodonite, Chrysoprase
+🌠 Astres régents : Vénus, Lune
+🪬 Symboles : cœur rayonnant, colombe, vortex rose, sceau d’union
+🧭 Rôle : Archange de l’amour inconditionnel
+📜 Traditions : Mystique chrétienne, Ésotérisme
+🧿 Noms associés : Camael, Kamael, Aniel` },
+{ name:"☀️ Jophiel – Oracle solaire des sphères supérieures", image:"arc6.png", description:`🔤 Nom : Jophiel, Iophiel, Zophiel — “Beauté de Dieu”
+🌈 Fréquence vibratoire : 963 Hz
+💎 Pierres associées : Topaze dorée, Rubellite, Kunzite
+🌠 Astres régents : Jupiter, Soleil
+🪬 Symboles : plume dorée, fleur cosmique, miroir céleste
+🧭 Rôle : Archange de la beauté
+📜 Traditions : Kabbale, Mystique chrétienne
+🧿 Noms associés : Zophiel, Dina, Iofiel` },
+{ name:"🔮 Zadkiel – Prêtre de la flamme violette", image:"arc7.png", description:`🔤 Nom : Zadkiel, Zedekiel — “Justice de Dieu”
+🌈 Fréquence vibratoire : 432 Hz
+💎 Pierres associées : Améthyste, Sugilite, Lapis-lazuli
+🌠 Astres régents : Saturne, Pluton
+🪬 Symboles : flamme violette, livre des âmes, sablier cosmique
+🧭 Rôle : Archange de la miséricorde
+📜 Traditions : Mystique chrétienne, New Age
+🧿 Noms associés : Zedekiel, Sachiel, Tzadkiel` },
+{ name:"🌌 Haniel – Reine lunaire intuitive", image:"arc8.png", description:`🔤 Nom : Haniel, Anael, Aniel — “Grâce de Dieu”
+🌈 Fréquence vibratoire : 417 Hz
+💎 Pierres associées : Pierre de lune, Labradorite, Sélénite
+🌠 Astres régents : Lune, Vénus
+🪬 Symboles : croissant lunaire, éventail nacré, miroir d’eau
+🧭 Rôle : Archange de la féminité sacrée
+📜 Traditions : Kabbale, Mystique chrétienne
+🧿 Noms associés : Anael, Aniel, Haniel` },
+{ name:"🌀 Raziel – Voyageur interdimensionnel", image:"arc9.png", description:`🔤 Nom : Raziel — “Secret de Dieu”
+🌈 Fréquence vibratoire : 888 Hz
+💎 Pierres associées : Cristal de roche, Moldavite, Obsidienne céleste
+🌠 Astres régents : Uranus, Mercure
+🪬 Symboles : livre scellé, spirale dorée, œil étoilé
+🧭 Rôle : Archange des mystères
+📜 Traditions : Kabbale, Ésotérisme
+🧿 Noms associés : Ratziel, Galizur` },
+{ name:"🕯️ Azraël – Sage funéraire de la renaissance", image:"arc10.png", description:`🔤 Nom : Azraël, Azriel — “Celui que Dieu aide”
+🌈 Fréquence vibratoire : 396 Hz
+💎 Pierres associées : Calcite crème, Chrysocolle, Rose des sables
+🌠 Astres régents : Saturne, Pluton
+🪬 Symboles : sablier, voile, plume blanche
+🧭 Rôle : Archange du passage
+📜 Traditions : Islam
