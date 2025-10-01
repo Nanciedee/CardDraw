@@ -1,154 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Draw App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #result img {
-      display: block;
-      margin: 10px auto;
-      max-width: 150px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    #history {
-      margin-top: 20px;
-      text-align: left;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    #history ul {
-      list-style: none;
-      padding: 0;
-    }
-    #history li {
-      margin: 10px 0;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-    }
-    #history img {
-      width: 40px;
-      vertical-align: middle;
-      border-radius: 4px;
-      margin-left: 5px;
-    }
-  </style>
-</head>
-<body>
-  <h1>🎴 Arc & Vib Card Draw</h1>
-  <button onclick="drawPair()">Draw Cards</button>
-  <button onclick="shuffleDecks()">🔄 Shuffle</button>
-  <button onclick="exportHistory()">📁 Export History</button>
-
-  <div id="result"></div>
-
-  <div id="history">
-    <h2>History</h2>
-    <ul id="historyList"></ul>
-  </div>
-
-  <script>
-    // Full decks (image paths point directly to root folder)
-    const fullArcDeck = [
-      { name: "Arc 1", image: "arc1.png" },
-      { name: "Arc 2", image: "arc2.png" },
-      { name: "Arc 3", image: "arc3.png" },
-      { name: "Arc 4", image: "arc4.png" },
-      { name: "Arc 5", image: "arc5.png" },
-      { name: "Arc 6", image: "arc6.png" },
-      { name: "Arc 7", image: "arc7.png" },
-      { name: "Arc 8", image: "arc8.png" },
-      { name: "Arc 9", image: "arc9.png" },
-      { name: "Arc 10", image: "arc10.png" },
-      { name: "Arc 11", image: "arc11.png" },
-      { name: "Arc 12", image: "arc12.png" }
-    ];
-
-    const fullVibDeck = [
-      { name: "Vib 1", image: "vib1.png" },
-      { name: "Vib 2", image: "vib2.png" },
-      { name: "Vib 3", image: "vib3.png" },
-      { name: "Vib 4", image: "vib4.png" },
-      { name: "Vib 5", image: "vib5.png" }
-    ];
-
-    // Current decks
-    let arcDeck = [...fullArcDeck];
-    let vibDeck = [...fullVibDeck];
-    let history = [];
-
-    function drawPair() {
-      if (arcDeck.length === 0 || vibDeck.length === 0) {
-        alert("Decks empty! Shuffle to continue.");
-        return;
-      }
-
-      const arcIndex = Math.floor(Math.random() * arcDeck.length);
-      const vibIndex = Math.floor(Math.random() * vibDeck.length);
-
-      const arc = arcDeck.splice(arcIndex, 1)[0];
-      const vib = vibDeck.splice(vibIndex, 1)[0];
-
-      // Show result
-      document.getElementById("result").innerHTML = `
-        <h3>${arc.name}</h3>
-        <img src="${arc.image}" alt="${arc.name}">
-        <h3>${vib.name}</h3>
-        <img src="${vib.image}" alt="${vib.name}">
-      `;
-
-      // Save to history
-      history.push({ arc, vib });
-      updateHistory();
-    }
-
-    function shuffleDecks() {
-      arcDeck = [...fullArcDeck];
-      vibDeck = [...fullVibDeck];
-      alert("Decks reshuffled!");
-    }
-
-    function updateHistory() {
-      const list = document.getElementById("historyList");
-      list.innerHTML = "";
-      history.forEach((draw, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>Draw ${index + 1}:</strong>
-          ${draw.arc.name} <img src="${draw.arc.image}">
-          | ${draw.vib.name} <img src="${draw.vib.image}">
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    function exportHistory() {
-      let text = "Arc,Vib\n";
-      history.forEach(draw => {
-        text += `${draw.arc.name},${draw.vib.name}\n`;
-      });
-
-      const blob = new Blob([text], { type: "text/csv" });
-      cons
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  #result img {
+    display: block;
+    margin: 10px auto;
+    max-width: 320px;  /* 🔥 bigger card images */
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  #history {
+    margin-top: 20px;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  #history ul {
+    list-style: none;
+    padding: 0;
+  }
+  #history li {
+    margin: 10px 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  #history img {
+    width: 60px;  /* 🔥 bigger thumbnails in history */
+    vertical-align: middle;
+    border-radius: 6px;
+    margin-left: 5px;
+  }
+</style>
