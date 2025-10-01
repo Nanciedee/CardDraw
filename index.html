@@ -1,156 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Draw App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-    .card {
-      max-width: 250px;
-      margin: 10px auto;
-      display: block;
-      cursor: pointer;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Draw App with Modal</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background: #f4f4f4;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  .card {
+    max-width: 250px;
+    margin: 10px auto;
+    display: block;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
 
-    /* Modal styling */
-    .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 1000; 
-      left: 0;
-      top: 0;
-      width: 100%; 
-      height: 100%; 
-      overflow: auto; 
-      background-color: rgba(0,0,0,0.6);
-    }
-    .modal-content {
-      background-color: #fff;
-      margin: 15% auto; 
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover {
-      color: #000;
-    }
-  </style>
+  /* Modal styling */
+  .modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.7);
+  }
+  .modal-content {
+    background-color: #fff;
+    margin: 8% auto; 
+    padding: 20px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    animation: fadeIn 0.3s ease-out;
+  }
+  .modal-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    margin: 10px 0;
+  }
+  .close {
+    color: #333;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #000;
+  }
+  @keyframes fadeIn {
+    from {opacity:0; transform: scale(0.9);}
+    to {opacity:1; transform: scale(1);}
+  }
+  .history {
+    margin-top: 20px;
+    text-align: left;
+  }
+</style>
 </head>
 <body>
-  <h1>🎴 Card Draw App</h1>
-  <button onclick="drawCard()">Draw a Card</button>
-  
-  <h2>Current Draw</h2>
-  <img id="arcCard" class="card" src="" alt="Arc card" onclick="showModal('arc')">
-  <img id="vibCard" class="card" src="" alt="Vib card" onclick="showModal('vib')">
+<h1>🎴 Card Draw App</h1>
+<button onclick="drawCard()">Draw a Card</button>
 
-  <div class="history">
-    <h2>History</h2>
-    <ul id="historyList"></ul>
+<h2>Current Draw</h2>
+<img id="arcCard" class="card" src="" alt="Arc card" onclick="showModal('arc')">
+<img id="vibCard" class="card" src="" alt="Vib card" onclick="showModal('vib')">
+
+<div class="history">
+  <h2>History</h2>
+  <ul id="historyList"></ul>
+</div>
+
+<!-- Modal -->
+<div id="cardModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <img id="modalImage" src="">
+    <p id="modalDesc"></p>
   </div>
+</div>
 
-  <!-- Modal -->
-  <div id="cardModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h2 id="modalTitle"></h2>
-      <img id="modalImage" src="" style="max-width:200px; margin:10px 0;">
-      <p id="modalDesc"></p>
-    </div>
-  </div>
+<script>
+  // Cards
+  const arcCards = ["arc1.png","arc2.png","arc3.png","arc4.png","arc5.png","arc6.png","arc7.png","arc8.png","arc9.png","arc10.png","arc11.png","arc12.png"];
+  const vibCards = ["vib1.png","vib2.png","vib3.png","vib4.png","vib5.png"];
 
-  <script>
-    // Cards
-    const arcCards = ["arc1.png","arc2.png","arc3.png","arc4.png","arc5.png","arc6.png","arc7.png","arc8.png","arc9.png","arc10.png","arc11.png","arc12.png"];
-    const vibCards = ["vib1.png","vib2.png","vib3.png","vib4.png","vib5.png"];
+  // Descriptions (replace text with your actual info)
+  const arcDescriptions = {
+    "arc1.png": "Arc 1: Creativity and new beginnings.",
+    "arc2.png": "Arc 2: Patience and reflection.",
+    "arc3.png": "Arc 3: Action and courage.",
+    "arc4.png": "Arc 4: Focus and clarity.",
+    "arc5.png": "Arc 5: Change and adaptability.",
+    "arc6.png": "Arc 6: Communication and connection.",
+    "arc7.png": "Arc 7: Intuition and insight.",
+    "arc8.png": "Arc 8: Strength and perseverance.",
+    "arc9.png": "Arc 9: Balance and harmony.",
+    "arc10.png": "Arc 10: Growth and expansion.",
+    "arc11.png": "Arc 11: Transformation and renewal.",
+    "arc12.png": "Arc 12: Reflection and wisdom."
+  };
 
-    // Descriptions
-    const arcDescriptions = {
-      "arc1.png": "Arc 1: Description goes here.",
-      "arc2.png": "Arc 2: Description goes here.",
-      "arc3.png": "Arc 3: Description goes here."
-      // add all remaining arcs
-    };
+  const vibDescriptions = {
+    "vib1.png": "Vib 1: Energy of harmony and balance.",
+    "vib2.png": "Vib 2: Inner awareness and mindfulness.",
+    "vib3.png": "Vib 3: Inspiration and intuition.",
+    "vib4.png": "Vib 4: Motivation and focus.",
+    "vib5.png": "Vib 5: Positive change and creativity."
+  };
 
-    const vibDescriptions = {
-      "vib1.png": "Vib 1: Description goes here.",
-      "vib2.png": "Vib 2: Description goes here."
-      // add all remaining vibs
-    };
+  let arcDeck = [...arcCards];
+  let vibDeck = [...vibCards];
+  let historyList = document.getElementById("historyList");
+  let currentArc = "";
+  let currentVib = "";
 
-    let arcDeck = [...arcCards];
-    let vibDeck = [...vibCards];
-    let historyList = document.getElementById("historyList");
-    let currentArc = "";
-    let currentVib = "";
+  function drawCard() {
+    if (arcDeck.length === 0) arcDeck = [...arcCards];
+    if (vibDeck.length === 0) vibDeck = [...vibCards];
 
-    function drawCard() {
-      if (arcDeck.length === 0) arcDeck = [...arcCards];
-      if (vibDeck.length === 0) vibDeck = [...vibCards];
+    currentArc = arcDeck.splice(Math.floor(Math.random() * arcDeck.length), 1)[0];
+    currentVib = vibDeck.splice(Math.floor(Math.random() * vibDeck.length), 1)[0];
 
-      currentArc = arcDeck.splice(Math.floor(Math.random() * arcDeck.length), 1)[0];
-      currentVib = vibDeck.splice(Math.floor(Math.random() * vibDeck.length), 1)[0];
+    document.getElementById("arcCard").src = currentArc;
+    document.getElementById("vibCard").src = currentVib;
 
-      document.getElementById("arcCard").src = currentArc;
-      document.getElementById("vibCard").src = currentVib;
+    let li = document.createElement("li");
+    li.textContent = `Arc: ${currentArc} + Vib: ${currentVib}`;
+    historyList.appendChild(li);
+  }
 
-      let li = document.createElement("li");
-      li.textContent = `Arc: ${currentArc} + Vib: ${currentVib}`;
-      historyList.appendChild(li);
+  function showModal(type) {
+    let title, img, desc;
+    if(type === "arc") {
+      title = currentArc;
+      img = currentArc;
+      desc = arcDescriptions[currentArc] || "No description yet.";
+    } else {
+      title = currentVib;
+      img = currentVib;
+      desc = vibDescriptions[currentVib] || "No description yet.";
     }
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalImage").src = img;
+    document.getElementById("modalDesc").textContent = desc;
+    document.getElementById("cardModal").style.display = "block";
+  }
 
-    // Modal functions
-    function showModal(type) {
-      let title, img, desc;
-      if(type === "arc") {
-        title = currentArc;
-        img = currentArc;
-        desc = arcDescriptions[currentArc] || "No description yet.";
-      } else {
-        title = currentVib;
-        img = currentVib;
-        desc = vibDescriptions[currentVib] || "No description yet.";
-      }
-      document.getElementById("modalTitle").textContent = title;
-      document.getElementById("modalImage").src = img;
-      document.getElementById("modalDesc").textContent = desc;
-      document.getElementById("cardModal").style.display = "block";
-    }
-
-    function closeModal() {
-      document.getElementById("cardModal").style.display = "none";
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-      const modal = document.getElementById("cardModal");
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    }
-  </script>
-</body>
-</html>
+  function closeModa
