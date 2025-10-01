@@ -3,100 +3,321 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tirage Cartes Arc & Vib</title>
+<title>Cartes Arc & Vib</title>
 <style>
-body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background:#f9f9f9; }
-button { padding: 15px 25px; font-size: 18px; cursor: pointer; margin: 10px; border-radius: 8px; }
-#cardContainer { margin-top: 20px; }
-#cardContainer img { max-width: 80%; height: auto; border-radius:10px; cursor:pointer; }
-#modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
-#modalContent { background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow-y:auto; text-align:left; }
-#modal img { max-width:100%; display:block; margin:0 auto 15px auto; }
-.closeModal { float:right; cursor:pointer; font-size:22px; font-weight:bold; }
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+h1 { text-align: center; margin-bottom: 20px; }
+button { padding: 10px 20px; margin: 10px; font-size: 1em; cursor: pointer; }
+#drawnCard { margin-top: 20px; text-align: center; }
+#drawnCard img { max-width: 300px; width: 90%; cursor: pointer; border-radius: 10px; }
+#history { margin-top: 20px; max-width: 400px; }
+#history h2 { margin-bottom: 10px; }
+#history ul { list-style: none; padding-left: 0; }
+#history li { background: #fff; margin-bottom: 5px; padding: 5px 10px; border-radius: 5px; }
+
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left:0; top:0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center; align-items: center;
+}
+#modalContent {
+    background: #fff;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    border-radius: 10px;
+    text-align: left;
+}
+#modalContent img { max-width: 100%; display: block; margin-bottom: 20px; border-radius: 10px; }
+#closeModal { float: right; cursor: pointer; font-size: 1.2em; }
 </style>
 </head>
 <body>
 
-<h1>Tirage Cartes Arc & Vib</h1>
-<button id="drawArc">Tirer une carte Arc</button>
-<button id="drawVib">Tirer une carte Vib</button>
-<button id="reshuffle">Reshuffle</button>
+<h1>🎴 Tirage de Cartes Arc & Vib</h1>
+<button id="drawBtn">Tirer une carte</button>
+<button id="reshuffleBtn">🔁 Mélanger le deck</button>
 
-<div id="cardContainer"></div>
+<div id="drawnCard"></div>
+
+<div id="history">
+    <h2>Historique des tirages :</h2>
+    <ul id="historyList"></ul>
+</div>
 
 <div id="modal">
     <div id="modalContent">
-        <span class="closeModal">&times;</span>
-        <img id="modalImage" src="" alt="Carte">
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
+        <span id="closeModal">✖️</span>
+        <img id="modalImage" src="" alt="">
+        <div id="modalText"></div>
     </div>
 </div>
 
 <script>
-// --- Données cartes Arc ---
+// --- Cartes Arc ---
 const arcCards = [
-  {name:"🛡️ Michaël", image:"arc1.png", description:"Description complète de Michaël..."},
-  {name:"🌿 Raphaël", image:"arc2.png", description:"Description complète de Raphaël..."},
-  {name:"🌙 Gabriel", image:"arc3.png", description:"Description complète de Gabriel..."},
-  {name:"🔥 Uriel", image:"arc4.png", description:"Description complète de Uriel..."},
-  {name:"🌸 Chamuel", image:"arc5.png", description:"Description complète de Chamuel..."},
-  {name:"☀️ Jophiel", image:"arc6.png", description:"Description complète de Jophiel..."},
-  {name:"🔮 Zadkiel", image:"arc7.png", description:"Description complète de Zadkiel..."},
-  {name:"🌌 Haniel", image:"arc8.png", description:"Description complète de Haniel..."},
-  {name:"🌀 Raziel", image:"arc9.png", description:"Description complète de Raziel..."},
-  {name:"🕯️ Azraël", image:"arc10.png", description:"Description complète de Azraël..."},
-  {name:"🧿 Metatron", image:"arc11.png", description:"Description complète de Metatron..."},
-  {name:"🌟 Sandalphon", image:"arc12.png", description:"Description complète de Sandalphon..."}
+{
+    name: "🛡️ Michaël – Guerrier céleste tribal",
+    image: "main/arc1.png",
+    description: `🔤 Nom : Mikhaël (hébreu מִיכָאֵל) — “Qui est comme Dieu ?”
+🌈 Fréquence vibratoire : 528 Hz
+💎 Pierres associées : Lapis-lazuli, Sodalite, Tourmaline noire
+🌞 Astres régents : Soleil, Mars
+🪬 Symboles : épée flamboyante, bouclier solaire, balance cosmique, cape étoilée
+🧭 Rôle : Protecteur des justes, chef des armées célestes
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Saint Michel, Mikael, Melek Mika’il`
+},
+{
+    name: "🌿 Raphaël – Chamane guérisseur végétal",
+    image: "main/arc2.png",
+    description: `🔤 Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit”
+🌈 Fréquence vibratoire : 639 Hz
+💎 Pierres associées : Malachite, Émeraude, Fluorite verte
+🌠 Astres régents : Mercure, Vénus
+🪬 Symboles : bâton de soin, temple de jade, tatouages floraux, lumière verte
+🧭 Rôle : Guérisseur divin, protecteur des voyageurs
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Rufa’il, Israfil`
+},
+name: "🌙 Gabriel – Messager d’eau et de lune",
+    image: "main/arc3.png",
+    description: `🔤 Nom : Gavri’el (hébreu גַּבְרִיאֵל) — “Force de Dieu”
+🌈 Fréquence vibratoire : 741 Hz
+💎 Pierres associées : Pierre de lune, Citrine, Cornaline
+🌠 Astres régents : Lune, Neptune
+🪬 Symboles : harpe lunaire, perles marines, coquillages vibrants, robe nacrée
+🧭 Rôle : Messager divin, porteur de révélations, guide des artistes et communicants
+📜 Traditions : Christianisme, Judaïsme, Islam
+🧿 Noms associés : Djibril, Gavriel, Jibril`
+},
+{
+    name: "🔥 Uriel – Alchimiste du feu cosmique",
+    image: "main/arc4.png",
+    description: `🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu” ou “Feu de Dieu”
+🌈 Fréquence vibratoire : 852 Hz
+💎 Pierres associées : Ambre, Pyrite, Hématite
+🌠 Astres régents : Uranus, Soleil
+🪬 Symboles : sphère incandescente, forge céleste, gants dorés, glyphes alchimiques
+🧭 Rôle : Porteur de sagesse divine, juge cosmique, gardien des secrets sacrés
+📜 Traditions : Christianisme ésotérique, Apocryphes, Occultisme
+🧿 Noms associés : Nuriel, Phanuel, Suriel, Sariel, Auriel`
+},
+{
+    name: "🌸 Chamuel – Gardien du jardin sacré",
+    image: "main/arc5.png",
+    description: `🔤 Nom : Chamuel, Camael, Kamael — “Celui qui voit Dieu”
+🌈 Fréquence vibratoire : 639 Hz
+💎 Pierres associées : Quartz rose, Rhodonite, Chrysoprase
+🌠 Astres régents : Vénus, Lune
+🪬 Symboles : cœur rayonnant, colombe, vortex rose, sceau d’union
+🧭 Rôle : Archange de l’amour inconditionnel, de la paix intérieure, de la réconciliation
+📜 Traditions : Mystique chrétienne, Ésotérisme
+🧿 Noms associés : Camael, Kamael, Aniel`
+},
+{
+    name: "☀️ Jophiel – Oracle solaire des sphères supérieures",
+    image: "main/arc6.png",
+    description: `🔤 Nom : Jophiel, Iophiel, Zophiel — “Beauté de Dieu”
+🌈 Fréquence vibratoire : 963 Hz
+💎 Pierres associées : Topaze dorée, Rubellite, Kunzite
+🌠 Astres régents : Jupiter, Soleil
+🪬 Symboles : plume dorée, fleur cosmique, miroir céleste
+🧭 Rôle : Archange de la beauté, de l’inspiration, de la clarté mentale
+📜 Traditions : Kabbale, Mystique chrétienne
+🧿 Noms associés : Zophiel, Dina, Iofiel`
+},
+{
+    name: "🔮 Zadkiel – Prêtre de la flamme violette",
+    image: "main/arc7.png",
+    description: `🔤 Nom : Zadkiel, Zedekiel — “Justice de Dieu”
+🌈 Fréquence vibratoire : 432 Hz
+💎 Pierres associées : Améthyste, Sugilite, Lapis-lazuli
+🌠 Astres régents : Saturne, Pluton
+🪬 Symboles : flamme violette, livre des âmes, sablier cosmique
+🧭 Rôle : Archange de la miséricorde, de la transmutation, du pardon
+📜 Traditions : Mystique chrétienne, New Age
+🧿 Noms associés : Zedekiel, Sachiel, Tzadkiel`
+},
+{
+    name: "🌌 Haniel – Reine lunaire intuitive",
+    image: "main/arc8.png",
+    description: `🔤 Nom : Haniel, Anael, Aniel — “Grâce de Dieu”
+🌈 Fréquence vibratoire : 417 Hz
+💎 Pierres associées : Pierre de lune, Labradorite, Sélénite
+🌠 Astres régents : Lune, Vénus
+🪬 Symboles : croissant lunaire, éventail nacré, miroir d’eau
+🧭 Rôle : Archange de la féminité sacrée, des émotions, des cycles
+📜 Traditions : Kabbale, Mystique chrétienne
+🧿 Noms associés : Anael, Aniel, Haniel`
+},
+{
+    name: "🌀 Raziel – Voyageur interdimensionnel",
+    image: "main/arc9.png",
+    description: `🔤 Nom : Raziel — “Secret de Dieu”
+🌈 Fréquence vibratoire : 888 Hz
+💎 Pierres associées : Cristal de roche, Moldavite, Obsidienne céleste
+🌠 Astres régents : Uranus, Mercure
+🪬 Symboles : livre scellé, spirale dorée, œil étoilé
+🧭 Rôle : Archange des mystères, des lois universelles, des archives akashiques
+📜 Traditions : Kabbale, Ésotérisme
+🧿 Noms associés : Ratziel, Galizur`
+},
+{
+    name: "🕯️ Azraël – Sage funéraire de la renaissance",
+    image: "main/arc10.png",
+    description: `🔤 Nom : Azraël, Azriel — “Celui que Dieu aide”
+🌈 Fréquence vibratoire : 396 Hz
+💎 Pierres associées : Calcite crème, Chrysocolle, Rose des sables
+🌠 Astres régents : Saturne, Pluton
+🪬 Symboles : sablier, voile, clé d’ombre, plume blanche
+🧭 Rôle : Archange du passage, du deuil, de la paix des âmes
+📜 Traditions : Islam, Mystique chrétienne
+🧿 Noms associés : Azriel, Izrail, Azariel`
+},
+{
+    name: "🪘 Sandalphon – Veilleur des racines et des chants terrestres",
+    image: "main/arc11.png",
+    description: `🔤 Nom : Sandalphon — “Frère” ou “Co-créateur”
+🌈 Fréquence vibratoire : 285 Hz
+💎 Pierres associées : Turquoise, Quartz bleu, Rhodonite
+🌠 Astres régents : Terre, Neptune
+🪬 Symboles : spirale terrestre, tambour cosmique, racines lumineuses
+🧭 Rôle : Archange de l’ancrage, de la musique sacrée, des prières incarnées
+📜 Traditions : Kabbale, Mystique
+🧿 Noms associés : Sandalphon, Sandalfin`
+},
+{
+    name: "✨ Métatron – Maître de la géométrie céleste",
+    image: "main/arc12.png",
+    description: `🔤 Nom : Métatron — “Celui qui occupe le trône à côté de Dieu”
+🌈 Fréquence vibratoire : 999 Hz
+💎 Pierres associées : Tourmaline melon d’eau, Rhodochrosite, Platine
+🌠 Astres régents : Pléiades, Sirius, énergie cosmique
+🪬 Symboles : cube de Métatron, trône céleste, vortex arc-en-ciel
+🧭 Rôle : Archange de l’ascension, gardien des archives célestes, maître des géométries divines
+📜 Traditions : Kabbale, Mystique
+🧿 Noms associés : Mitatron, Enoch, Yofiel`
+}
+);
 ];
 
-// --- Données cartes Vib ---
+// --- Cartes Vib ---
 const vibCards = [
-  {name:"🛡️ Protection", image:"vib1.png", description:"Rituel et description complète de la carte de Protection..."},
-  {name:"🌿 Guérison", image:"vib2.png", description:"Rituel et description complète de la carte de Guérison..."},
-  {name:"🧭 Guidance", image:"vib3.png", description:"Rituel et description complète de la carte de Guidance..."},
-  {name:"💗 Amour", image:"vib4.png", description:"Rituel et description complète de la carte d’Amour..."},
-  {name:"🦉 Sagesse", image:"vib5.png", description:"Rituel et description complète de la carte de Sagesse..."}
+{
+    name: "🛡️ Carte de Protection",
+    image: "main/vib1.png",
+    description: `Fonction : Dissout les intrusions, renforce l’aura, stabilise les champs
+Fréquence : 417 Hz
+Pierres : Obsidienne, Tourmaline noire, Hématite
+Astre : Mars / Saturne
+Invocation : "Je suis entouré(e) d’un cercle de lumière..."`
+},
+{
+    name: "🌿 Carte de Guérison",
+    image: "main/vib2.png",
+    description: `Fonction : Libère les mémoires, harmonise les corps subtils
+Fréquence : 528 Hz
+Pierres : Malachite, Chrysoprase, Fluorite verte
+Astre : Lune / Chiron
+Invocation : "Je suis un temple vivant, et je choisis la régénération."`
+},
+{
+    name: "🧭 Carte de Guidance",
+    image: "main/vib3.png",
+    description: `Fonction : Active l’intuition, éclaire les choix
+Fréquence : 852 Hz
+Pierres : Labradorite, Lapis lazuli, Apatite bleue
+Astre : Mercure / Uranus
+Invocation : "Je suis prêt(e) à recevoir les signes et à suivre le chemin."`
+},
+{
+    name: "💗 Carte d’Amour",
+    image: "main/vib4.png",
+    description: `Fonction : Dissout les blocages affectifs
+Fréquence : 639 Hz
+Pierres : Quartz rose, Kunzite, Rhodonite
+Astre : Vénus / Terre
+Invocation : "Je suis amour, je suis lien, je suis unité."`
+},
+{
+    name: "🦉 Carte de Sagesse",
+    image: "main/vib5.png",
+    description: `Fonction : Accès aux plans supérieurs, intégration des enseignements
+Fréquence : 963 Hz
+Pierres : Améthyste, Sodalite, Cristal de roche
+Astre : Soleil / Neptune
+Invocation : "Je suis un canal vivant de vérité, et je reçois les enseignements du ciel."`
+}
 ];
 
-let drawnArc = [];
-let drawnVib = [];
+// --- Combiner toutes les cartes ---
+let deck = [...arcCards, ...vibCards];
+let drawnHistory = [];
 
-function drawCard(deck, drawnArray) {
-  if(drawnArray.length === deck.length) drawnArray.length = 0; // reshuffle automatique
-  let remaining = deck.filter((c,i)=>!drawnArray.includes(i));
-  let index = Math.floor(Math.random()*remaining.length);
-  let cardIndex = deck.indexOf(remaining[index]);
-  drawnArray.push(cardIndex);
-  return deck[cardIndex];
+function drawCard() {
+    if(deck.length === 0){
+        alert("Deck vide ! Cliquez sur Mélanger pour recommencer.");
+        return;
+    }
+    const idx = Math.floor(Math.random() * deck.length);
+    const card = deck.splice(idx,1)[0]; // retirer du deck
+    drawnHistory.push(card);
+    showCard(card);
+    updateHistory();
+}
+
+function reshuffleDeck() {
+    deck = [...arcCards, ...vibCards];
+    drawnHistory = [];
+    document.getElementById("drawnCard").innerHTML = "";
+    updateHistory();
 }
 
 function showCard(card){
-  const modal = document.getElementById("modal");
-  document.getElementById("modalImage").src = card.image;
-  document.getElementById("modalTitle").textContent = card.name;
-  document.getElementById("modalDescription").textContent = card.description;
-  modal.style.display = "flex";
+    const container = document.getElementById("drawnCard");
+    container.innerHTML = `<img src="${card.image}" alt="${card.name}" title="Cliquez pour voir la description">`;
+    container.querySelector("img").onclick = ()=>openModal(card);
 }
 
-// Boutons
-document.getElementById("drawArc").addEventListener("click",()=>{
-  const card = drawCard(arcCards, drawnArc);
-  showCard(card);
-});
-document.getElementById("drawVib").addEventListener("click",()=>{
-  const card = drawCard(vibCards, drawnVib);
-  showCard(card);
-});
-document.getElementById("reshuffle").addEventListener("click",()=>{
-  drawnArc = [];
-  drawnVib = [];
-  alert("Decks reshufflés !");
-});
+function updateHistory(){
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+    drawnHistory.forEach(c=>{
+        const li = document.createElement("li");
+        li.textContent = c.name;
+        list.appendChild(li);
+    });
+}
 
-// Fermeture modal
-document.querySelector(".closeModal").addEventListener("click",()=>{document.getElementById("modal").style.display="none";});
-window.addEventListener("click",(e)=>{if(e.target.id==="modal") document.getElementById("modal").style.display="none";});
+// --- Modal ---
+const modal = document.getElementById("modal");
+const modalImage = document.getElementById("modalImage");
+const modalText = document.getElementById("modalText");
+document.getElementById("closeModal").onclick = ()=>{ modal.style.display="none"; }
+
+function openModal(card){
+    modal.style.display = "flex";
+    modalImage.src = card.image;
+    modalText.textContent = card.description;
+}
+
+// --- Events ---
+document.getElementById("drawBtn").onclick = drawCard;
+document.getElementById("reshuffleBtn").onclick = reshuffleDeck;
+
 </script>
 </body>
 </html>
