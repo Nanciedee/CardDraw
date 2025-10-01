@@ -1,37 +1,80 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tirage Cartes Arc & Vib</title>
-<style>
-body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background:#f9f9f9; }
-button { padding: 15px 25px; font-size: 18px; cursor: pointer; margin: 10px; border-radius: 8px; }
-#cardContainer { margin-top: 20px; }
-#cardContainer img { max-width: 80%; height: auto; border-radius:10px; cursor:pointer; }
-#modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
-#modalContent { background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow-y:auto; text-align:left; }
-#modal img { max-width:100%; display:block; margin:0 auto 15px auto; }
-.closeModal { float:right; cursor:pointer; font-size:22px; font-weight:bold; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tirage Cartes Arc & Vib</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background:#f9f9f9;
+    }
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+    }
+    button:hover { background:#45a049; }
+    #cardContainer { margin-top: 20px; }
+    #cardContainer img {
+      max-width: 80%;
+      height: auto;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    /* --- Modal --- */
+    #modal {
+      display:none;
+      position:fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.8);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    #modalContent {
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      max-width:600px;
+      max-height:80%;
+      overflow-y:auto;
+      text-align:left;
+    }
+    #modal img { max-width:100%; display:block; margin:0 auto 15px auto; }
+    .closeModal {
+      float:right;
+      cursor:pointer;
+      font-size:22px;
+      font-weight:bold;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Tirage Cartes Arc & Vib</h1>
-<button id="drawArc">Tirer une carte Arc</button>
-<button id="drawVib">Tirer une carte Vib</button>
-<button id="reshuffle">Reshuffle</button>
+  <h1>Tirage Cartes Arc & Vib</h1>
+  <button id="drawArc">Tirer une carte Arc</button>
+  <button id="drawVib">Tirer une carte Vib</button>
+  <button id="reshuffle">Reshuffle</button>
 
-<div id="cardContainer"></div>
+  <div id="cardContainer"></div>
 
-<div id="modal">
+  <!-- Modal -->
+  <div id="modal">
     <div id="modalContent">
-        <span class="closeModal">&times;</span>
-        <img id="modalImage" src="" alt="Carte">
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
+      <span class="closeModal">&times;</span>
+      <img id="modalImage" src="" alt="Carte">
+      <h2 id="modalTitle"></h2>
+      <p id="modalDescription"></p>
     </div>
-</div>
+  </div>
 
 <script>
 // --- Données cartes Arc ---
@@ -47,8 +90,8 @@ const arcCards = [
 🧭 Rôle : Protecteur des justes, chef des armées célestes
 📜 Traditions : Christianisme, Judaïsme, Islam
 🧿 Noms associés : Saint Michel, Mikael, Melek Mika’il`
-},
-{
+  },
+  {
     name: "🌿 Raphaël – Chamane guérisseur végétal",
     image: "main/arc2.png",
     description: `🔤 Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit”
@@ -59,7 +102,7 @@ const arcCards = [
 🧭 Rôle : Guérisseur divin, protecteur des voyageurs
 📜 Traditions : Christianisme, Judaïsme, Islam
 🧿 Noms associés : Rufa’il, Israfil`
-},
+  },
   {
     name: "🌙 Gabriel – Messager d’eau et de lune",
     image: "main/arc3.png",
@@ -71,11 +114,11 @@ const arcCards = [
 🧭 Rôle : Messager divin, porteur de révélations, guide des artistes et communicants
 📜 Traditions : Christianisme, Judaïsme, Islam
 🧿 Noms associés : Djibril, Gavriel, Jibril`
-},
-{
+  },
+  {
     name: "🔥 Uriel – Alchimiste du feu cosmique",
     image: "main/arc4.png",
-    description: `🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu” ou “Feu de Dieu”
+    description: `🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu”
 🌈 Fréquence vibratoire : 852 Hz
 💎 Pierres associées : Ambre, Pyrite, Hématite
 🌠 Astres régents : Uranus, Soleil
@@ -83,8 +126,8 @@ const arcCards = [
 🧭 Rôle : Porteur de sagesse divine, juge cosmique, gardien des secrets sacrés
 📜 Traditions : Christianisme ésotérique, Apocryphes, Occultisme
 🧿 Noms associés : Nuriel, Phanuel, Suriel, Sariel, Auriel`
-},
-{
+  },
+  {
     name: "🌸 Chamuel – Gardien du jardin sacré",
     image: "main/arc5.png",
     description: `🔤 Nom : Chamuel, Camael, Kamael — “Celui qui voit Dieu”
@@ -95,11 +138,11 @@ const arcCards = [
 🧭 Rôle : Archange de l’amour inconditionnel, de la paix intérieure, de la réconciliation
 📜 Traditions : Mystique chrétienne, Ésotérisme
 🧿 Noms associés : Camael, Kamael, Aniel`
-},
-{
+  },
+  {
     name: "☀️ Jophiel – Oracle solaire des sphères supérieures",
     image: "main/arc6.png",
-    description: `🔤 Nom : Jophiel, Iophiel, Zophiel — “Beauté de Dieu”
+    description: `🔤 Nom : Jophiel — “Beauté de Dieu”
 🌈 Fréquence vibratoire : 963 Hz
 💎 Pierres associées : Topaze dorée, Rubellite, Kunzite
 🌠 Astres régents : Jupiter, Soleil
@@ -107,11 +150,11 @@ const arcCards = [
 🧭 Rôle : Archange de la beauté, de l’inspiration, de la clarté mentale
 📜 Traditions : Kabbale, Mystique chrétienne
 🧿 Noms associés : Zophiel, Dina, Iofiel`
-},
-{
+  },
+  {
     name: "🔮 Zadkiel – Prêtre de la flamme violette",
     image: "main/arc7.png",
-    description: `🔤 Nom : Zadkiel, Zedekiel — “Justice de Dieu”
+    description: `🔤 Nom : Zadkiel — “Justice de Dieu”
 🌈 Fréquence vibratoire : 432 Hz
 💎 Pierres associées : Améthyste, Sugilite, Lapis-lazuli
 🌠 Astres régents : Saturne, Pluton
@@ -119,11 +162,11 @@ const arcCards = [
 🧭 Rôle : Archange de la miséricorde, de la transmutation, du pardon
 📜 Traditions : Mystique chrétienne, New Age
 🧿 Noms associés : Zedekiel, Sachiel, Tzadkiel`
-},
-{
+  },
+  {
     name: "🌌 Haniel – Reine lunaire intuitive",
     image: "main/arc8.png",
-    description: `🔤 Nom : Haniel, Anael, Aniel — “Grâce de Dieu”
+    description: `🔤 Nom : Haniel — “Grâce de Dieu”
 🌈 Fréquence vibratoire : 417 Hz
 💎 Pierres associées : Pierre de lune, Labradorite, Sélénite
 🌠 Astres régents : Lune, Vénus
@@ -131,8 +174,8 @@ const arcCards = [
 🧭 Rôle : Archange de la féminité sacrée, des émotions, des cycles
 📜 Traditions : Kabbale, Mystique chrétienne
 🧿 Noms associés : Anael, Aniel, Haniel`
-},
-{
+  },
+  {
     name: "🌀 Raziel – Voyageur interdimensionnel",
     image: "main/arc9.png",
     description: `🔤 Nom : Raziel — “Secret de Dieu”
@@ -143,11 +186,11 @@ const arcCards = [
 🧭 Rôle : Archange des mystères, des lois universelles, des archives akashiques
 📜 Traditions : Kabbale, Ésotérisme
 🧿 Noms associés : Ratziel, Galizur`
-},
-{
+  },
+  {
     name: "🕯️ Azraël – Sage funéraire de la renaissance",
     image: "main/arc10.png",
-    description: `🔤 Nom : Azraël, Azriel — “Celui que Dieu aide”
+    description: `🔤 Nom : Azraël — “Celui que Dieu aide”
 🌈 Fréquence vibratoire : 396 Hz
 💎 Pierres associées : Calcite crème, Chrysocolle, Rose des sables
 🌠 Astres régents : Saturne, Pluton
@@ -155,8 +198,8 @@ const arcCards = [
 🧭 Rôle : Archange du passage, du deuil, de la paix des âmes
 📜 Traditions : Islam, Mystique chrétienne
 🧿 Noms associés : Azriel, Izrail, Azariel`
-},
-{
+  },
+  {
     name: "🪘 Sandalphon – Veilleur des racines et des chants terrestres",
     image: "main/arc11.png",
     description: `🔤 Nom : Sandalphon — “Frère” ou “Co-créateur”
@@ -167,8 +210,8 @@ const arcCards = [
 🧭 Rôle : Archange de l’ancrage, de la musique sacrée, des prières incarnées
 📜 Traditions : Kabbale, Mystique
 🧿 Noms associés : Sandalphon, Sandalfin`
-},
-{
+  },
+  {
     name: "✨ Métatron – Maître de la géométrie céleste",
     image: "main/arc12.png",
     description: `🔤 Nom : Métatron — “Celui qui occupe le trône à côté de Dieu”
@@ -179,8 +222,8 @@ const arcCards = [
 🧭 Rôle : Archange de l’ascension, gardien des archives célestes, maître des géométries divines
 📜 Traditions : Kabbale, Mystique
 🧿 Noms associés : Mitatron, Enoch, Yofiel`
-}
-);
+  }
+];
 
 // --- Données cartes Vib ---
 const vibCards = [
@@ -192,8 +235,8 @@ Fréquence : 417 Hz
 Pierres : Obsidienne, Tourmaline noire, Hématite
 Astre : Mars / Saturne
 Invocation : "Je suis entouré(e) d’un cercle de lumière..."`
-},
-{
+  },
+  {
     name: "🌿 Carte de Guérison",
     image: "main/vib2.png",
     description: `Fonction : Libère les mémoires, harmonise les corps subtils
@@ -201,8 +244,8 @@ Fréquence : 528 Hz
 Pierres : Malachite, Chrysoprase, Fluorite verte
 Astre : Lune / Chiron
 Invocation : "Je suis un temple vivant, et je choisis la régénération."`
-},
-{
+  },
+  {
     name: "🧭 Carte de Guidance",
     image: "main/vib3.png",
     description: `Fonction : Active l’intuition, éclaire les choix
@@ -210,8 +253,8 @@ Fréquence : 852 Hz
 Pierres : Labradorite, Lapis lazuli, Apatite bleue
 Astre : Mercure / Uranus
 Invocation : "Je suis prêt(e) à recevoir les signes et à suivre le chemin."`
-},
-{
+  },
+  {
     name: "💗 Carte d’Amour",
     image: "main/vib4.png",
     description: `Fonction : Dissout les blocages affectifs
@@ -219,8 +262,8 @@ Fréquence : 639 Hz
 Pierres : Quartz rose, Kunzite, Rhodonite
 Astre : Vénus / Terre
 Invocation : "Je suis amour, je suis lien, je suis unité."`
-},
-{
+  },
+  {
     name: "🦉 Carte de Sagesse",
     image: "main/vib5.png",
     description: `Fonction : Accès aux plans supérieurs, intégration des enseignements
@@ -228,14 +271,14 @@ Fréquence : 963 Hz
 Pierres : Améthyste, Sodalite, Cristal de roche
 Astre : Soleil / Neptune
 Invocation : "Je suis un canal vivant de vérité, et je reçois les enseignements du ciel."`
-}
+  }
 ];
 
 let drawnArc = [];
 let drawnVib = [];
 
 function drawCard(deck, drawnArray) {
-  if(drawnArray.length === deck.length) drawnArray.length = 0; // reshuffle automatique
+  if(drawnArray.length === deck.length) drawnArray.length = 0; // reshuffle auto
   let remaining = deck.filter((c,i)=>!drawnArray.includes(i));
   let index = Math.floor(Math.random()*remaining.length);
   let cardIndex = deck.indexOf(remaining[index]);
@@ -272,4 +315,3 @@ window.addEventListener("click",(e)=>{if(e.target.id==="modal") document.getElem
 </script>
 </body>
 </html>
-
