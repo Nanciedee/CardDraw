@@ -14,7 +14,6 @@
       color: #333;
     }
     h1 {
-      color: #444;
       margin-bottom: 20px;
     }
     .btn {
@@ -26,13 +25,12 @@
       border: none;
       background-color: #4CAF50;
       color: white;
-      display: inline-block;
     }
     .btn:hover {
       background-color: #45a049;
     }
     #result {
-      font-size: 22px;
+      font-size: 20px;
       margin: 20px 0;
       font-weight: bold;
     }
@@ -41,16 +39,31 @@
       font-size: 14px;
       color: #666;
     }
+    .card-display {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .card {
+      text-align: center;
+    }
+    .card img {
+      width: 150px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
     #history {
       margin-top: 30px;
-      text-align: left;
-      max-width: 400px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
       background: white;
       padding: 15px;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: left;
     }
     #history h2 {
       font-size: 18px;
@@ -67,10 +80,18 @@
       border-bottom: 1px solid #eee;
       font-size: 16px;
     }
+    #history img {
+      width: 40px;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
     @media (max-width: 600px) {
       .btn {
         width: 90%;
         font-size: 20px;
+      }
+      .card img {
+        width: 120px;
       }
     }
   </style>
@@ -82,7 +103,7 @@
   <button class="btn" onclick="manualShuffle()">🔄 Shuffle Decks</button>
   <button class="btn" onclick="exportHistory()">📁 Export History</button>
 
-  <p id="result"></p>
+  <div id="result"></div>
   <p id="status"></p>
 
   <div id="history">
@@ -91,23 +112,32 @@
   </div>
 
   <script>
-    // Full decks
+    // Full decks (replace file names with your own if needed)
     const fullArcDeck = [
-      "Arc of Fire", "Arc of Water", "Arc of Earth", "Arc of Air",
-      "Arc of Spirit", "Arc of Shadow", "Arc of Light", "Arc of Time",
-      "Arc of Wisdom", "Arc of Strength", "Arc of Healing", "Arc of Fate"
+      { name: "Arc of Fire", image: "images/arc1.png" },
+      { name: "Arc of Water", image: "images/arc2.png" },
+      { name: "Arc of Earth", image: "images/arc3.png" },
+      { name: "Arc of Air", image: "images/arc4.png" },
+      { name: "Arc of Spirit", image: "images/arc5.png" },
+      { name: "Arc of Shadow", image: "images/arc6.png" },
+      { name: "Arc of Light", image: "images/arc7.png" },
+      { name: "Arc of Time", image: "images/arc8.png" },
+      { name: "Arc of Wisdom", image: "images/arc9.png" },
+      { name: "Arc of Strength", image: "images/arc10.png" },
+      { name: "Arc of Healing", image: "images/arc11.png" },
+      { name: "Arc of Fate", image: "images/arc12.png" }
     ];
 
     const fullVibDeck = [
-      "Vib of Joy", "Vib of Peace", "Vib of Energy",
-      "Vib of Balance", "Vib of Love"
+      { name: "Vib of Joy", image: "images/vib1.png" },
+      { name: "Vib of Peace", image: "images/vib2.png" },
+      { name: "Vib of Energy", image: "images/vib3.png" },
+      { name: "Vib of Balance", image: "images/vib4.png" },
+      { name: "Vib of Love", image: "images/vib5.png" }
     ];
 
-    // Working decks
     let arcDeck = [...fullArcDeck];
     let vibDeck = [...fullVibDeck];
-
-    // History
     let history = [];
 
     function drawCards() {
@@ -129,13 +159,23 @@
       const vib = vibDeck.splice(vibIndex, 1)[0];
 
       // Save to history
-      const pair = `Arc: ${arc} | Vib: ${vib}`;
-      history.push(pair);
+      history.push({ arc, vib });
 
-      // Show result
-      document.getElementById("result").innerText = pair;
+      // Show result with images
+      document.getElementById("result").innerHTML = `
+        <div class="card-display">
+          <div class="card">
+            <h3>${arc.name}</h3>
+            <img src="${arc.image}" alt="${arc.name}">
+          </div>
+          <div class="card">
+            <h3>${vib.name}</h3>
+            <img src="${vib.image}" alt="${vib.name}">
+          </div>
+        </div>
+      `;
 
-      // Show how many left
+      // Update remaining counts
       document.getElementById("status").innerText =
         `Remaining → Arc: ${arcDeck.length} | Vib: ${vibDeck.length}`;
 
@@ -156,7 +196,10 @@
       list.innerHTML = "";
       history.slice().reverse().forEach(draw => {
         const li = document.createElement("li");
-        li.textContent = draw;
+        li.innerHTML = `
+          ${draw.arc.name} <img src="${draw.arc.image}">
+          | ${draw.vib.name} <img src="${draw.vib.image}">
+        `;
         list.appendChild(li);
       });
     }
@@ -166,12 +209,10 @@
         alert("No draws to export yet!");
         return;
       }
-
-      let csvContent = "data:text/csv;charset=utf-8,Draws\n";
-      history.forEach(row => {
-        csvContent += row + "\n";
+      let csvContent = "data:text/csv;charset=utf-8,Arc,Vib\n";
+      history.forEach(draw => {
+        csvContent += `"${draw.arc.name}","${draw.vib.name}"\n`;
       });
-
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
