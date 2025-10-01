@@ -1,188 +1,168 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Draw App with Modal</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-    background: #f4f4f4;
-  }
-  button {
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-bottom: 20px;
-  }
-  .card {
-    max-width: 250px;
-    margin: 10px auto;
-    display: block;
-    cursor: pointer;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
+const vibDescriptions = {
+  "vib1.png": `🛡️ Carte de Protection
 
-  /* Modal styling */
-  .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.7);
-  }
-  .modal-content {
-    background-color: #fff;
-    margin: 8% auto; 
-    padding: 20px;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    animation: fadeIn 0.3s ease-out;
-  }
-  .modal-content img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    margin: 10px 0;
-  }
-  .close {
-    color: #333;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .close:hover {
-    color: #000;
-  }
-  @keyframes fadeIn {
-    from {opacity:0; transform: scale(0.9);}
-    to {opacity:1; transform: scale(1);}
-  }
-  .history {
-    margin-top: 20px;
-    text-align: left;
-  }
-</style>
-</head>
-<body>
-<h1>🎴 Card Draw App</h1>
-<button onclick="drawCard()">Draw a Card</button>
+🔮 Rituel de Protection Vibratoire
+- Fonction vibratoire principale : Dissout les intrusions, renforce l’aura, stabilise les champs
+- Qualité divine : Bouclier énergétique, enracinement, sécurité
+- Fréquence : 417 Hz
+- Pierres associées :
+  - Obsidienne : transmutation, protection psychique
+  - Tourmaline noire : ancrage, neutralisation des énergies
+  - Hématite : stabilisation, renforcement du champ vital
+- Astre régent : Mars / Saturne
+- Effet vibratoire : Dissolution des intrusions, stabilisation du champ
+- Contextes : Rituel de purification, clôture énergétique, protection d’un espace ou d’un être
 
-<h2>Current Draw</h2>
-<img id="arcCard" class="card" src="" alt="Arc card" onclick="showModal('arc')">
-<img id="vibCard" class="card" src="" alt="Vib card" onclick="showModal('vib')">
+📜 Invocation sacrée
+> “Je suis entouré(e) d’un cercle de lumière, nul ne peut pénétrer sans mon accord.”
 
-<div class="history">
-  <h2>History</h2>
-  <ul id="historyList"></ul>
-</div>
+✨ Intention
+> Créer un bouclier énergétique autour de soi, d’un espace ou d’un être. Dissoudre les intrusions, renforcer l’ancrage et stabiliser les champs subtils.
 
-<!-- Modal -->
-<div id="cardModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2 id="modalTitle"></h2>
-    <img id="modalImage" src="">
-    <p id="modalDesc"></p>
-  </div>
-</div>
+## 1. Préparation du Cercle
+- 🕯️ Allume une bougie noire ou rouge (Mars/Saturne)
+- 🧂 Trace un cercle au sol avec du sel ou de la poudre de tourmaline
+- 🔔 Fais résonner un diapason à 417 Hz ou joue une onde binaurale correspondante
 
-<script>
-  // Cards
-  const arcCards = ["arc1.png","arc2.png","arc3.png","arc4.png","arc5.png","arc6.png","arc7.png","arc8.png","arc9.png","arc10.png","arc11.png","arc12.png"];
-  const vibCards = ["vib1.png","vib2.png","vib3.png","vib4.png","vib5.png"];
+## 2. Supports vibratoires
+| Élément | Symbole | Usage |
+| --- | --- | --- |
+| Fréquence | 🎵 417 Hz | Active la libération et la dissolution vibratoire |
+| Pierre | 💎 Obsidienne / Tourmaline noire / Hématite | À tenir ou placer aux quatre coins du cercle |
+| Astre régent | 🔱 Mars / Saturne | À invoquer pour sceller et renforcer l’intention |
 
-  // Descriptions (replace text with your actual info)
-  const arcDescriptions = {
-    "arc1.png": "Arc 1: - Nom : Mikhaël (hébreu מִיכָאֵל) — “Qui est comme Dieu ?” 🌈 **Fréquence vibratoire** : **528 Hz** — fréquence de transformation, réparation de l’ADN, purification.
-- 💎 **Pierres associées** : *Lapis-lazuli*, *Sodalite*, *Tourmaline noire*
-- 🌞 **Astres régents** : *Soleil*, *Mars* — feu sacré, autorité, courage.
-- 🪬 **Symboles** : épée flamboyante, bouclier solaire, balance cosmique, cape étoilée.
-- 🧭 **Rôle** : Protecteur des justes, chef des armées célestes, défenseur contre les forces du mal.
-- 📜 **Traditions** :
-    - *Christianisme* : Combattant du dragon dans l’Apocalypse.
-    - *Judaïsme* : Ange protecteur du peuple hébreu.
-    - *Islam* : Mikail, ange de la pluie et de la miséricorde.
-- 🧿 **Noms associés** : Saint Michel, Mikael, Melek Mika’il.",
-    "arc2.png": "Arc 2:  Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit” - 🌈 **Fréquence vibratoire** : **639 Hz** — fréquence de l’amour, de la compassion, de la guérison relationnelle.
-- 💎 **Pierres associées** : *Malachite*, *Émeraude*, *Fluorite verte*
-- 🌠 **Astres régents** : *Mercure*, *Vénus* — soin, harmonie, régénération.
-- 🪬 **Symboles** : bâton de soin, temple de jade, tatouages floraux, lumière verte.
-- 🧭 **Rôle** : Guérisseur divin, protecteur des voyageurs, des amoureux et des âmes blessées.
-- 📜 **Traditions** :
-    - *Christianisme* : Guide de Tobie, guérisseur des corps et des âmes.
-    - *Judaïsme* : Ange de la médecine et de la guérison.
-    - *Islam* : Associé à Israfil, l’ange du cor du Jugement.
-- 🧿 **Noms associés** : Rufa’il, Israfil (selon certaines traditions).",
-    "arc3.png": "Arc 3: Action and courage.",
-    "arc4.png": "Arc 4: Focus and clarity.",
-    "arc5.png": "Arc 5: Change and adaptability.",
-    "arc6.png": "Arc 6: Communication and connection.",
-    "arc7.png": "Arc 7: Intuition and insight.",
-    "arc8.png": "Arc 8: Strength and perseverance.",
-    "arc9.png": "Arc 9: Balance and harmony.",
-    "arc10.png": "Arc 10: Growth and expansion.",
-    "arc11.png": "Arc 11: Transformation and renewal.",
-    "arc12.png": "Arc 12: Reflection and wisdom."
-  };
+## 3. Activation par le souffle
+- Inspire profondément en visualisant une lumière rouge-noire montant depuis la Terre
+- Expire en visualisant un bouclier doré se former autour de toi
+- Répète ce cycle 7 fois, en rythme avec le son 417 Hz
 
-  const vibDescriptions = {
-    "vib1.png": "Vib 1: Energy of harmony and balance.",
-    "vib2.png": "Vib 2: Inner awareness and mindfulness.",
-    "vib3.png": "Vib 3: Inspiration and intuition.",
-    "vib4.png": "Vib 4: Motivation and focus.",
-    "vib5.png": "Vib 5: Positive change and creativity."
-  };
+## 4. Invocation sacrée
+`Par la force de Mars et la sagesse de Saturne,  
+J’appelle la vibration de Protection divine.  
+Que l’obsidienne scelle, que le son purifie,  
+Que mon champ soit inviolable, stable et sacré.  
+Je suis entouré(e) d’un cercle de lumière,  
+Nul ne peut pénétrer sans mon accord.  
+Ainsi soit-il.`
 
-  let arcDeck = [...arcCards];
-  let vibDeck = [...vibCards];
-  let historyList = document.getElementById("historyList");
-  let currentArc = "";
-  let currentVib = "";
+## 5. Scellement énergétique
+- Place la carte Protection au centre du cercle
+- Dispose les pierres autour en triangle ou carré
+- Visualise une spirale noire et dorée montant du sol et enveloppant l’espace
+- Termine par 3 frappes de tambour ou 3 tintements de cloche
 
-  function drawCard() {
-    if (arcDeck.length === 0) arcDeck = [...arcCards];
-    if (vibDeck.length === 0) vibDeck = [...vibCards];
+## 6. Intégration
+- Bois une infusion de racines (gingembre, réglisse, ortie)
+- Note dans ton journal : “Ce qui est à moi est protégé. Ce qui ne m’appartient pas est dissous.”
+- Laisse la carte sur ton autel pendant 3 jours
 
-    currentArc = arcDeck.splice(Math.floor(Math.random() * arcDeck.length), 1)[0];
-    currentVib = vibDeck.splice(Math.floor(Math.random() * vibDeck.length), 1)[0];
+## Utilisation complémentaire
+- À répéter lors de périodes de vulnérabilité ou de transition
+- À faire avant le sommeil pour sceller l’espace astral
+- À utiliser pour purifier et protéger un lieu (maison, cabinet, temple)`,
 
-    document.getElementById("arcCard").src = currentArc;
-    document.getElementById("vibCard").src = currentVib;
+  "vib2.png": `🌿 Carte de Guérison
 
-    let li = document.createElement("li");
-    li.textContent = `Arc: ${currentArc} + Vib: ${currentVib}`;
-    historyList.appendChild(li);
-  }
+🌱 Rituel de Guérison Vibratoire
+- Fonction vibratoire principale : Libère les mémoires, harmonise les corps subtils
+- Qualité divine : Régénération, purification, réparation
+- Fréquence : 528 Hz
+- Pierres associées : Malachite, Chrysoprase, Fluorite verte
+- Astre régent : Lune / Chiron
+- Effet vibratoire : Réparation cellulaire, libération émotionnelle
+- Contextes : Soin énergétique, méditation de régénération, libération des mémoires
 
-  function showModal(type) {
-    let title, img, desc;
-    if(type === "arc") {
-      title = currentArc;
-      img = currentArc;
-      desc = arcDescriptions[currentArc] || "No description yet.";
-    } else {
-      title = currentVib;
-      img = currentVib;
-      desc = vibDescriptions[currentVib] || "No description yet.";
-    }
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalImage").src = img;
-    document.getElementById("modalDesc").textContent = desc;
-    document.getElementById("cardModal").style.display = "block";
-  }
+📜 Invocation sacrée
+> “Je suis un temple vivant, et je choisis la régénération.”
 
-  function closeModa
+✨ Intention
+> Activer la régénération intérieure, purifier les mémoires émotionnelles, harmoniser les corps subtils et restaurer l’énergie vitale.
 
+## 1. Préparation de l’espace
+- 🕯️ Allume une bougie verte ou blanche (Lune/Chiron)
+- 🌿 Diffuse une huile essentielle de lavande, eucalyptus ou menthe
+- 🎵 Lance une onde binaurale ou un diapason à 528 Hz
+
+## 2. Supports vibratoires
+| Élément | Symbole | Usage |
+| --- | --- | --- |
+| Fréquence | 🎵 528 Hz | Réparation cellulaire, activation du cœur, purification de l’ADN |
+| Pierres | 💎 Malachite / Chrysoprase / Fluorite verte | À poser sur le cœur, le plexus ou les mains |
+| Astre régent | 🌙 Lune / Chiron | À invoquer pour guider le soin et libérer les mémoires |
+
+## 3. Respiration régénérante
+- Inspire en visualisant une lumière verte émeraude entrant par le sommet du crâne
+- Expire en envoyant cette lumière dans les zones de tension ou de douleur
+- Répète ce cycle 9 fois, en rythme avec le son 528 Hz
+
+## 4. Invocation sacrée
+`Par la lumière de la Lune et la médecine de Chiron,  
+J’appelle la vibration sacrée de Guérison.  
+Que la malachite purifie, que le son répare,  
+Que mes cellules se souviennent de leur harmonie.  
+Je suis un temple vivant,  
+Et je choisis la régénération.  
+Ainsi soit-il.`
+
+## 5. Soin énergétique
+- Place la carte Guérison sur ton cœur ou devant toi
+- Dispose les pierres en triangle autour du corps ou de la zone à traiter
+- Visualise une spirale verte tournant lentement dans le sens horaire
+- Laisse le soin durer 22 minutes ou jusqu’à ce que le ressenti s’apaise
+
+## 6. Intégration
+- Bois une infusion de plantes médicinales (ortie, camomille, mélisse)
+- Note dans ton journal : “Je suis en train de me réparer. Mon énergie est restaurée.”
+- Laisse la carte sur ton autel pendant 3 jours, accompagnée d’un cristal
+
+## Utilisation complémentaire
+- À faire lors des pleines lunes ou des transits de Chiron
+- À intégrer dans les soins énergétiques ou les cercles de guérison
+- À utiliser avant le sommeil pour favoriser la régénération nocturne`,
+
+  "vib3.png": `🧭 Carte de Guidance
+
+🌀 Rituel de Guidance Vibratoire
+- Fonction vibratoire principale : Active l’intuition, éclaire les choix, ouvre les voies
+- Qualité divine : Clarté, discernement, orientation
+- Fréquence : 852 Hz
+- Pierres associées : Labradorite, Lapis lazuli, Apatite bleue
+- Astre régent : Mercure / Uranus
+- Effet vibratoire : Activation du 3e œil, connexion au Soi supérieur
+- Contextes : Tirage intuitif, écriture inspirée, orientation spirituelle
+
+📜 Invocation sacrée
+> “Je suis prêt(e) à recevoir les signes et à suivre le chemin qui s’ouvre devant moi.”
+
+✨ Intention
+> Recevoir une orientation claire, activer l’intuition profonde, ouvrir les voies invisibles et se relier au Soi supérieur.
+
+## 1. Préparation de l’espace
+- 🕯️ Allume une bougie bleue ou argentée (Mercure/Uranus)
+- 📿 Place un objet symbolique de voyage ou de vision (boussole, plume, miroir)
+- 🎵 Lance une onde binaurale ou un diapason à 852 Hz
+
+## 2. Supports vibratoires
+| Élément | Symbole | Usage |
+| --- | --- | --- |
+| Fréquence | 🎵 852 Hz | Activation du 3e œil, connexion au Soi supérieur |
+| Pierres | 💎 Labradorite / Lapis lazuli / Apatite bleue | À poser sur le front, la gorge ou dans la main gauche |
+| Astre régent | ☿ Mercure / ♅ Uranus | À invoquer pour ouvrir les canaux de perception et d’inspiration |
+
+## 3. Respiration intuitive
+- Inspire en visualisant une lumière indigo pénétrant par le front
+- Expire en envoyant cette lumière vers le cœur et les mains
+- Répète ce cycle 11 fois, en rythme avec le son 852 Hz
+
+## 4. Invocation sacrée
+`Par la clarté de Mercure et l’éveil d’Uranus,  
+J’appelle la vibration sacrée de Guidance.  
+Que la labradorite éclaire, que le son révèle,  
+Que mes pas soient guidés par la sagesse intérieure.  
+Je suis prêt(e) à recevoir les signes,  
+Et à suivre le chemin qui s’ouvre devant moi.  
+Ainsi soit-il.`
+
+## 5. Tirage ou canalisation
+- Place la carte Guidance devant toi
+- Dispose les pierres en triangle
