@@ -29,54 +29,94 @@
       border-radius:10px;
       cursor:pointer;
     }
-    /* --- Modal --- */
+    /* ==== Modal ==== */
     #modal {
-      display:none;
-      position:fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.8);
-      justify-content:center;
-      align-items:center;
-      z-index:1000;
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
     }
+
     #modalContent {
-      background:#fff;
-      padding:20px;
-      border-radius:10px;
-      max-width:600px;
-      max-height:80%;
-      overflow-y:auto;
-      text-align:left;
+      background: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
     }
-    #modal img { max-width:100%; display:block; margin:0 auto 15px auto; }
+
     .closeModal {
-      float:right;
-      cursor:pointer;
-      font-size:22px;
-      font-weight:bold;
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .closeModal:hover {
+      color: #000;
+    }
+
+    /* ==== Image du modal ==== */
+    #modalImage {
+      display: block;
+      margin: 0 auto 15px;
+      width: 250px;   /* 🔧 Ajuste ici si tu veux plus grand */
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Historique */
+    #history {
+      margin-top: 20px;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #history h3 {
+      margin-top: 0;
     }
   </style>
 </head>
 <body>
 
-  <h1>Tirage Cartes Arc & Vib</h1>
-  <button id="drawArc">Tirer une carte Arc</button>
-  <button id="drawVib">Tirer une carte Vib</button>
-  <button id="reshuffle">Reshuffle</button>
+  <h1>✨ Tirage de Cartes Arc & Vib ✨</h1>
 
-  <div id="cardContainer"></div>
+  <button onclick="drawArc()">Tirer une carte Arc</button>
+  <button onclick="drawVib()">Tirer une carte Vib</button>
 
   <!-- Modal -->
   <div id="modal">
     <div id="modalContent">
-      <span class="closeModal">&times;</span>
+      <span class="closeModal" onclick="closeModal()">&times;</span>
       <img id="modalImage" src="" alt="Carte">
       <h2 id="modalTitle"></h2>
       <p id="modalDescription"></p>
     </div>
   </div>
 
-<script>
+  <!-- Historique -->
+  <div id="history">
+    <h3>Historique des tirages</h3>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
 // --- Données cartes Arc ---
 const arcCards = [
   {
@@ -274,44 +314,54 @@ Invocation : "Je suis un canal vivant de vérité, et je reçois les enseignemen
   }
 ];
 
-let drawnArc = [];
-let drawnVib = [];
+let arcDrawn = [];
+    let vibDrawn = [];
 
-function drawCard(deck, drawnArray) {
-  if(drawnArray.length === deck.length) drawnArray.length = 0; // reshuffle auto
-  let remaining = deck.filter((c,i)=>!drawnArray.includes(i));
-  let index = Math.floor(Math.random()*remaining.length);
-  let cardIndex = deck.indexOf(remaining[index]);
-  drawnArray.push(cardIndex);
-  return deck[cardIndex];
-}
+    function drawCard(deck, drawnArray) {
+      if (drawnArray.length === deck.length) drawnArray.length = 0;
+      let remaining = deck.filter((_, i) => !drawnArray.includes(i));
+      let randomIndex = Math.floor(Math.random() * remaining.length);
+      let card = remaining[randomIndex];
+      let cardIndex = deck.indexOf(card);
+      drawnArray.push(cardIndex);
+      showModal(card);
+      addToHistory(card);
+    }
 
-function showCard(card){
-  const modal = document.getElementById("modal");
-  document.getElementById("modalImage").src = card.image;
-  document.getElementById("modalTitle").textContent = card.name;
-  document.getElementById("modalDescription").textContent = card.description;
-  modal.style.display = "flex";
-}
+    function drawArc() {
+      drawCard(arcCards, arcDrawn);
+    }
 
-// Boutons
-document.getElementById("drawArc").addEventListener("click",()=>{
-  const card = drawCard(arcCards, drawnArc);
-  showCard(card);
-});
-document.getElementById("drawVib").addEventListener("click",()=>{
-  const card = drawCard(vibCards, drawnVib);
-  showCard(card);
-});
-document.getElementById("reshuffle").addEventListener("click",()=>{
-  drawnArc = [];
-  drawnVib = [];
-  alert("Decks reshufflés !");
-});
+    function drawVib() {
+      drawCard(vibCards, vibDrawn);
+    }
 
-// Fermeture modal
-document.querySelector(".closeModal").addEventListener("click",()=>{document.getElementById("modal").style.display="none";});
-window.addEventListener("click",(e)=>{if(e.target.id==="modal") document.getElementById("modal").style.display="none";});
-</script>
+    function showModal(card) {
+      document.getElementById("modalTitle").innerText = card.name;
+      document.getElementById("modalImage").src = card.image;
+      document.getElementById("modalDescription").innerText = card.description;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function addToHistory(card) {
+      let li = document.createElement("li");
+      li.textContent = `${card.name} → ${card.description}`;
+      document.getElementById("historyList").appendChild(li);
+    }
+
+    // Fermer modal si clic en dehors
+    window.onclick = function(event) {
+      const modal = document.getElementById("modal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
 </body>
 </html>
+
+
