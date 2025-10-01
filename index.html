@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tirage Cartes Arc & Vib</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      background:#f9f9f9;
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background:#f9f9f9; }
+    button { padding: 15px 25px; font-size: 18px; cursor: pointer; margin: 10px; border-radius: 8px; }
+    #cardContainer { margin-top: 20px; }
+    #cardContainer img { max-width: 80%; height: auto; border-radius:10px; cursor:pointer; }
+    #modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
+    #modalContent { background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow-y:auto; text-align:left; }
+    #modal img { max-width:100%; display:block; margin:0 auto 15px auto; }
     }
     button {
       padding: 15px 25px;
@@ -67,12 +69,11 @@
 
     /* ==== Image du modal ==== */
     #modalImage {
+      width: 100%;
+      max-width: 400px; /* largeur max */
+      height: auto;
       display: block;
       margin: 0 auto 15px;
-      width: 250px;   /* 🔧 Ajuste ici si tu veux plus grand */
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     /* Historique */
@@ -121,7 +122,7 @@
 const arcCards = [
   {
     name: "🛡️ Michaël – Guerrier céleste tribal",
-    image: "main/arc1.png",
+    image: "arc1.png",
     description: `🔤 Nom : Mikhaël (hébreu מִיכָאֵל) — “Qui est comme Dieu ?”
 🌈 Fréquence vibratoire : 528 Hz
 💎 Pierres associées : Lapis-lazuli, Sodalite, Tourmaline noire
@@ -133,7 +134,7 @@ const arcCards = [
   },
   {
     name: "🌿 Raphaël – Chamane guérisseur végétal",
-    image: "main/arc2.png",
+    image: "arc2.png",
     description: `🔤 Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit”
 🌈 Fréquence vibratoire : 639 Hz
 💎 Pierres associées : Malachite, Émeraude, Fluorite verte
@@ -145,7 +146,7 @@ const arcCards = [
   },
   {
     name: "🌙 Gabriel – Messager d’eau et de lune",
-    image: "main/arc3.png",
+    image: "arc3.png",
     description: `🔤 Nom : Gavri’el (hébreu גַּבְרִיאֵל) — “Force de Dieu”
 🌈 Fréquence vibratoire : 741 Hz
 💎 Pierres associées : Pierre de lune, Citrine, Cornaline
@@ -157,7 +158,7 @@ const arcCards = [
   },
   {
     name: "🔥 Uriel – Alchimiste du feu cosmique",
-    image: "main/arc4.png",
+    image: "arc4.png",
     description: `🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu”
 🌈 Fréquence vibratoire : 852 Hz
 💎 Pierres associées : Ambre, Pyrite, Hématite
@@ -169,7 +170,7 @@ const arcCards = [
   },
   {
     name: "🌸 Chamuel – Gardien du jardin sacré",
-    image: "main/arc5.png",
+    image: "arc5.png",
     description: `🔤 Nom : Chamuel, Camael, Kamael — “Celui qui voit Dieu”
 🌈 Fréquence vibratoire : 639 Hz
 💎 Pierres associées : Quartz rose, Rhodonite, Chrysoprase
@@ -181,7 +182,7 @@ const arcCards = [
   },
   {
     name: "☀️ Jophiel – Oracle solaire des sphères supérieures",
-    image: "main/arc6.png",
+    image: "arc6.png",
     description: `🔤 Nom : Jophiel — “Beauté de Dieu”
 🌈 Fréquence vibratoire : 963 Hz
 💎 Pierres associées : Topaze dorée, Rubellite, Kunzite
@@ -193,7 +194,7 @@ const arcCards = [
   },
   {
     name: "🔮 Zadkiel – Prêtre de la flamme violette",
-    image: "main/arc7.png",
+    image: "arc7.png",
     description: `🔤 Nom : Zadkiel — “Justice de Dieu”
 🌈 Fréquence vibratoire : 432 Hz
 💎 Pierres associées : Améthyste, Sugilite, Lapis-lazuli
@@ -205,7 +206,7 @@ const arcCards = [
   },
   {
     name: "🌌 Haniel – Reine lunaire intuitive",
-    image: "main/arc8.png",
+    image: "arc8.png",
     description: `🔤 Nom : Haniel — “Grâce de Dieu”
 🌈 Fréquence vibratoire : 417 Hz
 💎 Pierres associées : Pierre de lune, Labradorite, Sélénite
@@ -217,7 +218,7 @@ const arcCards = [
   },
   {
     name: "🌀 Raziel – Voyageur interdimensionnel",
-    image: "main/arc9.png",
+    image: "arc9.png",
     description: `🔤 Nom : Raziel — “Secret de Dieu”
 🌈 Fréquence vibratoire : 888 Hz
 💎 Pierres associées : Cristal de roche, Moldavite, Obsidienne céleste
@@ -229,7 +230,7 @@ const arcCards = [
   },
   {
     name: "🕯️ Azraël – Sage funéraire de la renaissance",
-    image: "main/arc10.png",
+    image: "arc10.png",
     description: `🔤 Nom : Azraël — “Celui que Dieu aide”
 🌈 Fréquence vibratoire : 396 Hz
 💎 Pierres associées : Calcite crème, Chrysocolle, Rose des sables
@@ -241,7 +242,7 @@ const arcCards = [
   },
   {
     name: "🪘 Sandalphon – Veilleur des racines et des chants terrestres",
-    image: "main/arc11.png",
+    image: "arc11.png",
     description: `🔤 Nom : Sandalphon — “Frère” ou “Co-créateur”
 🌈 Fréquence vibratoire : 285 Hz
 💎 Pierres associées : Turquoise, Quartz bleu, Rhodonite
@@ -253,7 +254,7 @@ const arcCards = [
   },
   {
     name: "✨ Métatron – Maître de la géométrie céleste",
-    image: "main/arc12.png",
+    image: "arc12.png",
     description: `🔤 Nom : Métatron — “Celui qui occupe le trône à côté de Dieu”
 🌈 Fréquence vibratoire : 999 Hz
 💎 Pierres associées : Tourmaline melon d’eau, Rhodochrosite, Platine
@@ -269,7 +270,7 @@ const arcCards = [
 const vibCards = [
   {
     name: "🛡️ Carte de Protection",
-    image: "main/vib1.png",
+    image: "vib1.png",
     description: `Fonction : Dissout les intrusions, renforce l’aura, stabilise les champs
 Fréquence : 417 Hz
 Pierres : Obsidienne, Tourmaline noire, Hématite
@@ -278,7 +279,7 @@ Invocation : "Je suis entouré(e) d’un cercle de lumière..."`
   },
   {
     name: "🌿 Carte de Guérison",
-    image: "main/vib2.png",
+    image: "vib2.png",
     description: `Fonction : Libère les mémoires, harmonise les corps subtils
 Fréquence : 528 Hz
 Pierres : Malachite, Chrysoprase, Fluorite verte
@@ -287,7 +288,7 @@ Invocation : "Je suis un temple vivant, et je choisis la régénération."`
   },
   {
     name: "🧭 Carte de Guidance",
-    image: "main/vib3.png",
+    image: "vib3.png",
     description: `Fonction : Active l’intuition, éclaire les choix
 Fréquence : 852 Hz
 Pierres : Labradorite, Lapis lazuli, Apatite bleue
@@ -296,7 +297,7 @@ Invocation : "Je suis prêt(e) à recevoir les signes et à suivre le chemin."`
   },
   {
     name: "💗 Carte d’Amour",
-    image: "main/vib4.png",
+    image: "vib4.png",
     description: `Fonction : Dissout les blocages affectifs
 Fréquence : 639 Hz
 Pierres : Quartz rose, Kunzite, Rhodonite
@@ -305,7 +306,7 @@ Invocation : "Je suis amour, je suis lien, je suis unité."`
   },
   {
     name: "🦉 Carte de Sagesse",
-    image: "main/vib5.png",
+    image: "vib5.png",
     description: `Fonction : Accès aux plans supérieurs, intégration des enseignements
 Fréquence : 963 Hz
 Pierres : Améthyste, Sodalite, Cristal de roche
@@ -343,9 +344,27 @@ let arcDrawn = [];
       document.getElementById("modal").style.display = "block";
     }
 
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-    }
+    .closeModal { float:right; cursor:pointer; font-size:22px; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+  <h1>Tirage Cartes Arc & Vib</h1>
+  <button id="drawArc">Tirer une carte Arc</button>
+  <button id="drawVib">Tirer une carte Vib</button>
+  <button id="reshuffle">Reshuffle</button>
+
+  <div id="cardContainer"></div>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div id="modalContent">
+      <span class="closeModal">&times;</span>
+      <img id="modalImage" src="" alt="Carte">
+      <h2 id="modalTitle"></h2>
+      <p id="modalDescription"></p>
+    </div>
+  </div>
 
     function addToHistory(card) {
       let li = document.createElement("li");
@@ -363,5 +382,6 @@ let arcDrawn = [];
   </script>
 </body>
 </html>
+
 
 
