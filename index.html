@@ -70,28 +70,28 @@
   </div>
 
   <script>
-    // Full decks
+    // Full decks (image paths point directly to root folder)
     const fullArcDeck = [
-      { name: "Arc 1", image: "images/arc1.png" },
-      { name: "Arc 2", image: "images/arc2.png" },
-      { name: "Arc 3", image: "images/arc3.png" },
-      { name: "Arc 4", image: "images/arc4.png" },
-      { name: "Arc 5", image: "images/arc5.png" },
-      { name: "Arc 6", image: "images/arc6.png" },
-      { name: "Arc 7", image: "images/arc7.png" },
-      { name: "Arc 8", image: "images/arc8.png" },
-      { name: "Arc 9", image: "images/arc9.png" },
-      { name: "Arc 10", image: "images/arc10.png" },
-      { name: "Arc 11", image: "images/arc11.png" },
-      { name: "Arc 12", image: "images/arc12.png" }
+      { name: "Arc 1", image: "arc1.png" },
+      { name: "Arc 2", image: "arc2.png" },
+      { name: "Arc 3", image: "arc3.png" },
+      { name: "Arc 4", image: "arc4.png" },
+      { name: "Arc 5", image: "arc5.png" },
+      { name: "Arc 6", image: "arc6.png" },
+      { name: "Arc 7", image: "arc7.png" },
+      { name: "Arc 8", image: "arc8.png" },
+      { name: "Arc 9", image: "arc9.png" },
+      { name: "Arc 10", image: "arc10.png" },
+      { name: "Arc 11", image: "arc11.png" },
+      { name: "Arc 12", image: "arc12.png" }
     ];
 
     const fullVibDeck = [
-      { name: "Vib 1", image: "images/vib1.png" },
-      { name: "Vib 2", image: "images/vib2.png" },
-      { name: "Vib 3", image: "images/vib3.png" },
-      { name: "Vib 4", image: "images/vib4.png" },
-      { name: "Vib 5", image: "images/vib5.png" }
+      { name: "Vib 1", image: "vib1.png" },
+      { name: "Vib 2", image: "vib2.png" },
+      { name: "Vib 3", image: "vib3.png" },
+      { name: "Vib 4", image: "vib4.png" },
+      { name: "Vib 5", image: "vib5.png" }
     ];
 
     // Current decks
@@ -151,15 +151,4 @@
       });
 
       const blob = new Blob([text], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "history.csv";
-      a.click();
-
-      URL.revokeObjectURL(url);
-    }
-  </script>
-</body>
-</html>
+      cons
