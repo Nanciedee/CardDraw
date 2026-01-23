@@ -55,27 +55,36 @@
             </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="flex flex-wrap justify-between items-center gap-4">
-                <h3 class="serif font-bold uppercase text-xs flex gap-2 items-center"><i data-lucide="palette" size="20"></i> Espace Créatif</h3>
-                
-                <div class="flex flex-wrap gap-3 items-center bg-white/60 p-2 rounded-full border border-white shadow-md">
-                    <a href="https://nanciedee.github.io/CardDraw/" target="_blank" class="px-5 py-2 bg-indigo-600 text-white rounded-full text-xs font-bold uppercase hover:bg-indigo-700 transition flex items-center gap-2">
-                        <i data-lucide="layers" size="16"></i> Tirer une Carte
-                    </a>
+<div class="space-y-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h3 class="serif font-bold uppercase text-xs flex gap-2 items-center">
+            <i data-lucide="palette" size="20"></i> Espace Créatif
+        </h3>
+        
+        <div class="flex items-center bg-white/90 p-1.5 rounded-full border border-indigo-100 shadow-md">
+            <a href="https://nanciedee.github.io/CardDraw/" target="_blank" class="whitespace-nowrap px-4 py-2 bg-indigo-600 text-white rounded-full text-[10px] font-bold uppercase hover:bg-indigo-700 transition flex items-center gap-2 mr-2">
+                <i data-lucide="layers" size="14"></i> Tirer une Carte
+            </a>
 
-                    <div class="h-6 w-[1px] bg-gray-300 mx-1"></div>
+            <div class="h-6 w-[1px] bg-gray-200 mx-1"></div>
 
-                    <label class="cursor-pointer bg-white text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border border-amber-200 flex items-center gap-2">
-                        <i data-lucide="image" size="14"></i> Image 
-                        <input type="file" id="imageLoader" class="hidden" accept="image/*">
-                    </label>
-                    
-                    <input type="color" id="color" class="w-8 h-8 rounded-full cursor-pointer bg-transparent border-none p-0" value="#4f46e5">
-                    
-                    <button onclick="clearCanvas()" class="px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-bold uppercase border border-red-100">Effacer</button>
-                </div>
-            </div>
+            <label class="cursor-pointer bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border border-amber-200 flex items-center gap-2 mx-1">
+                <i data-lucide="image" size="14"></i> Image 
+                <input type="file" id="imageLoader" class="hidden" accept="image/*">
+            </label>
+            
+            <input type="color" id="color" class="w-8 h-8 rounded-full cursor-pointer bg-transparent border-none p-0 mx-1" value="#4f46e5">
+            
+            <button onclick="clearCanvas()" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-bold uppercase border border-red-100 ml-1">
+                <i data-lucide="trash-2" size="12"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="relative">
+        <canvas id="canvas" class="w-full h-[450px] shadow-inner bg-white"></canvas>
+    </div>
+</div>
             
             <div class="relative">
                 <canvas id="canvas" class="w-full h-[500px] shadow-inner"></canvas>
@@ -163,3 +172,4 @@
     </script>
 </body>
 </html>
+
