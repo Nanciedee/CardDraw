@@ -1,175 +1,163 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réflexion Matinale - My1Prayer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Great+Vibes&family=Delius&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { background-color: #FFF5E1; font-family: 'Lato', sans-serif; color: #4A4A4A; min-height: 100vh; padding: 20px; }
-        .glass { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.6); border-radius: 2.5rem; }
-        .paper { background-color: #fdfaf0; border: 1px solid #faedcd; border-radius: 1.5rem; }
-        .serif { font-family: 'Playfair Display', serif; color: #1e1b4b; }
-        .handwritten { font-family: 'Great Vibes', cursive; color: #b45309; font-size: 3.5rem; }
-        .scripture { font-family: 'Delius', cursive; }
-        canvas { background: white; border: 2px dashed #cbd5e1; border-radius: 1.5rem; cursor: crosshair; touch-action: none; }
-        .mood-btn { font-size: 3rem; transition: transform 0.2s; cursor: pointer; opacity: 0.6; }
-        .active-mood { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4)); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Draw App</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+padding: 20px;
+      background: #f4f4f4;
+}
+button {
+padding: 10px 20px;
+@@ -20,10 +21,41 @@
+max-width: 250px;
+margin: 10px auto;
+display: block;
+      cursor: pointer;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.6);
+}
+    .history {
+      margin-top: 20px;
+      text-align: left;
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto; 
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #000;
+}
+</style>
 </head>
-<body class="flex flex-col items-center">
+@@ -32,37 +64,93 @@
+<button onclick="drawCard()">Draw a Card</button>
 
-    <div class="max-w-5xl w-full glass p-6 md:p-12 shadow-2xl my-6">
-        
-        <div class="text-center mb-10">
-            <h1 class="handwritten">Réflexion Matinale</h1>
-            <p class="serif uppercase tracking-widest text-xs font-bold">Mon Espace My1Prayer</p>
-        </div>
+<h2>Current Draw</h2>
+  <img id="arcCard" class="card" src="" alt="Arc card">
+  <img id="vibCard" class="card" src="" alt="Vib card">
+  <img id="arcCard" class="card" src="" alt="Arc card" onclick="showModal('arc')">
+  <img id="vibCard" class="card" src="" alt="Vib card" onclick="showModal('vib')">
 
-        <div class="grid md:grid-cols-2 gap-8 mb-10">
-            <div class="space-y-6">
-                <div class="paper p-6 text-center shadow-sm">
-                    <p class="scripture text-lg italic text-gray-700">"Ne vous inquiétez de rien..."</p>
-                    <p class="text-right text-xs mt-2 font-bold text-amber-700">Phil 4:6</p>
-                </div>
-                <div class="p-6 bg-white/30 rounded-[2rem] border border-white/50">
-                    <h3 class="serif font-bold uppercase text-xs mb-3 flex gap-2"><i data-lucide="pen-tool" size="18"></i> Ma Prière</h3>
-                    <textarea id="prayerText" oninput="saveData()" class="w-full h-40 bg-transparent border-none focus:ring-0 text-gray-700 scripture text-lg" placeholder="Seigneur..."></textarea>
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="p-6 bg-white/30 rounded-[2rem] border border-white/50 text-center">
-                    <h3 class="serif font-bold uppercase text-xs mb-4">Humeur & Progression</h3>
-                    <div class="flex justify-around mb-6">
-                        <span onclick="setMood('🤩', this)" class="mood-btn">🤩</span>
-                        <span onclick="setMood('✨', this)" class="mood-btn">✨</span>
-                        <span onclick="setMood('💛', this)" class="mood-btn">💛</span>
-                        <span onclick="setMood('😄', this)" class="mood-btn">😄</span>
-                        <span onclick="setMood('😔', this)" class="mood-btn">😔</span>
-                    </div>
-                    <div id="weeklyHistory" class="flex justify-between gap-1"></div>
-                </div>
-            </div>
-        </div>
-
-<div class="space-y-4">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h3 class="serif font-bold uppercase text-xs flex gap-2 items-center">
-            <i data-lucide="palette" size="20"></i> Espace Créatif
-        </h3>
-        
-        <div class="flex items-center bg-white/90 p-1.5 rounded-full border border-indigo-100 shadow-md">
-            <a href="https://nanciedee.github.io/CardDraw/" target="_blank" class="whitespace-nowrap px-4 py-2 bg-indigo-600 text-white rounded-full text-[10px] font-bold uppercase hover:bg-indigo-700 transition flex items-center gap-2 mr-2">
-                <i data-lucide="layers" size="14"></i> Tirer une Carte
-            </a>
-
-            <div class="h-6 w-[1px] bg-gray-200 mx-1"></div>
-
-            <label class="cursor-pointer bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border border-amber-200 flex items-center gap-2 mx-1">
-                <i data-lucide="image" size="14"></i> Image 
-                <input type="file" id="imageLoader" class="hidden" accept="image/*">
-            </label>
-            
-            <input type="color" id="color" class="w-8 h-8 rounded-full cursor-pointer bg-transparent border-none p-0 mx-1" value="#4f46e5">
-            
-            <button onclick="clearCanvas()" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-bold uppercase border border-red-100 ml-1">
-                <i data-lucide="trash-2" size="12"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="relative">
-        <canvas id="canvas" class="w-full h-[450px] shadow-inner bg-white"></canvas>
-    </div>
+<div class="history">
+<h2>History</h2>
+<ul id="historyList"></ul>
 </div>
-            
-            <div class="relative">
-                <canvas id="canvas" class="w-full h-[500px] shadow-inner"></canvas>
-            </div>
-        </div>
+
+  <!-- Modal -->
+  <div id="cardModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modalTitle"></h2>
+      <img id="modalImage" src="" style="max-width:200px; margin:10px 0;">
+      <p id="modalDesc"></p>
     </div>
+  </div>
 
-    <script>
-        lucide.createIcons();
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
+<script>
+    // Arc + Vib card lists (no "images/" prefix since they’re in main folder)
+    // Cards
+const arcCards = ["arc1.png","arc2.png","arc3.png","arc4.png","arc5.png","arc6.png","arc7.png","arc8.png","arc9.png","arc10.png","arc11.png","arc12.png"];
+const vibCards = ["vib1.png","vib2.png","vib3.png","vib4.png","vib5.png"];
 
-        function initCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            ctx.lineCap = 'round'; ctx.lineWidth = 3;
-        }
+    // Descriptions
+    const arcDescriptions = {
+      "arc1.png": "Arc 1: Description goes here.",
+      "arc2.png": "Arc 2: Description goes here.",
+      "arc3.png": "Arc 3: Description goes here."
+      // add all remaining arcs
+    };
 
-        canvas.onmousedown = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); };
-        canvas.onmousemove = (e) => { 
-            if(drawing) { 
-                ctx.strokeStyle = document.getElementById('color').value;
-                ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); 
-            } 
-        };
-        window.onmouseup = () => drawing = false;
+    const vibDescriptions = {
+      "vib1.png": "Vib 1: Description goes here.",
+      "vib2.png": "Vib 2: Description goes here."
+      // add all remaining vibs
+    };
 
-        canvas.ondblclick = (e) => {
-            const text = prompt("Écrivez votre mot :");
-            if (text) {
-                ctx.font = "24px Delius, cursive";
-                ctx.fillStyle = document.getElementById('color').value;
-                ctx.fillText(text, e.offsetX, e.offsetY);
-            }
-        };
+let arcDeck = [...arcCards];
+let vibDeck = [...vibCards];
+let historyList = document.getElementById("historyList");
+    let currentArc = "";
+    let currentVib = "";
 
-        document.getElementById('imageLoader').onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0, img.width, img.height, (canvas.width - img.width*ratio)/2, (canvas.height - img.height*ratio)/2, img.width*ratio, img.height*ratio);
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        };
+function drawCard() {
+      if (arcDeck.length === 0) arcDeck = [...arcCards]; // reshuffle
+      if (arcDeck.length === 0) arcDeck = [...arcCards];
+if (vibDeck.length === 0) vibDeck = [...vibCards];
 
-        let journalData = JSON.parse(localStorage.getItem('my1prayer_data')) || {};
-        const today = new Date().toISOString().split('T')[0];
+      const arc = arcDeck.splice(Math.floor(Math.random() * arcDeck.length), 1)[0];
+      const vib = vibDeck.splice(Math.floor(Math.random() * vibDeck.length), 1)[0];
+      currentArc = arcDeck.splice(Math.floor(Math.random() * arcDeck.length), 1)[0];
+      currentVib = vibDeck.splice(Math.floor(Math.random() * vibDeck.length), 1)[0];
 
-        function saveData() {
-            if(!journalData[today]) journalData[today] = {};
-            journalData[today].prayer = document.getElementById('prayerText').value;
-            localStorage.setItem('my1prayer_data', JSON.stringify(journalData));
-        }
+      document.getElementById("arcCard").src = arc;
+      document.getElementById("vibCard").src = vib;
+      document.getElementById("arcCard").src = currentArc;
+      document.getElementById("vibCard").src = currentVib;
 
-        function setMood(mood, el) {
-            document.querySelectorAll('.mood-btn').forEach(m => m.classList.remove('active-mood'));
-            el.classList.add('active-mood');
-            if(!journalData[today]) journalData[today] = {};
-            journalData[today].mood = mood;
-            localStorage.setItem('my1prayer_data', JSON.stringify(journalData));
-            updateHistory();
-        }
+let li = document.createElement("li");
+      li.textContent = `Arc: ${arc} + Vib: ${vib}`;
+      li.textContent = `Arc: ${currentArc} + Vib: ${currentVib}`;
+historyList.appendChild(li);
+}
 
-        function updateHistory() {
-            const historyDiv = document.getElementById('weeklyHistory');
-            historyDiv.innerHTML = '';
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                const dateKey = d.toISOString().split('T')[0];
-                const dayName = d.toLocaleDateString('fr-FR', { weekday: 'short' });
-                const mood = journalData[dateKey]?.mood || '•';
-                historyDiv.innerHTML += `<div class="flex-1 p-1 border rounded-xl bg-white/50 text-center ${dateKey === today ? 'border-amber-400 bg-amber-50' : 'border-transparent'}"><div class="text-[7px] font-bold uppercase text-indigo-300">${dayName}</div><div class="text-sm">${mood}</div></div>`;
-            }
-        }
+    // Modal functions
+    function showModal(type) {
+      let title, img, desc;
+      if(type === "arc") {
+        title = currentArc;
+        img = currentArc;
+        desc = arcDescriptions[currentArc] || "No description yet.";
+      } else {
+        title = currentVib;
+        img = currentVib;
+        desc = vibDescriptions[currentVib] || "No description yet.";
+      }
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalImage").src = img;
+      document.getElementById("modalDesc").textContent = desc;
+      document.getElementById("cardModal").style.display = "block";
+    }
 
-        function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); }
-        window.onload = () => { initCanvas(); updateHistory(); if(journalData[today]) document.getElementById('prayerText').value = journalData[today].prayer || ''; };
-        window.onresize = initCanvas;
-    </script>
+    function closeModal() {
+      document.getElementById("cardModal").style.display = "none";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("cardModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+</script>
 </body>
 </html>
-
