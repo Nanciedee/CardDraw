@@ -32,16 +32,25 @@
       z-index:1000; backdrop-filter: blur(3px); 
     }
     #modalContent { 
-      background:#fff; padding:30px; border-radius:20px; max-width:500px; 
-      width: 90%; max-height:85vh; overflow-y:auto; text-align:left; 
-      position: relative; animation: fadeIn 0.3s ease;
-    }
+  background:#fff; 
+  padding: 30px; 
+  border-radius: 20px; 
+  max-width: 600px;      /* Élargi pour accueillir une plus grande image */
+  width: 95%; 
+  max-height: 90vh; 
+  overflow-y: auto; 
+}
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     
     #modal img { 
-      max-width:240px; display:block; margin:0 auto 20px auto; 
-      border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
-    }
+  width: 100%;           /* Utilise toute la largeur du conteneur */
+  max-width: 350px;      /* Augmente cette valeur pour agrandir l'ange */
+  height: auto; 
+  display: block; 
+  margin: 0 auto 20px auto; 
+  border-radius: 12px; 
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+}
     .closeModal { position: absolute; top: 15px; right: 20px; cursor:pointer; font-size:32px; color: #bbb; }
     .closeModal:hover { color: #333; }
     
@@ -85,26 +94,26 @@
 
   <script>
     const arcCards = [
-      { name: "🛡️ Michaël – Guerrier céleste tribal", image: "main/arc1.png", description: "🔤 Nom : Mikhaël — “Qui est comme Dieu ?”\n🌈 Fréquence : 528 Hz\n💎 Pierres : Lapis-lazuli, Sodalite, Tourmaline noire\n🌞 Astres : Soleil, Mars\n🪬 Symboles : épée flamboyante, bouclier solaire\n🧭 Rôle : Protecteur des justes" },
-      { name: "🌿 Raphaël – Chamane guérisseur végétal", image: "main/arc2.png", description: "🔤 Nom : Refael — “Dieu guérit”\n🌈 Fréquence : 639 Hz\n💎 Pierres : Malachite, Émeraude, Fluorite verte\n🌠 Astres : Mercure, Vénus\n🪬 Symboles : bâton de soin, temple de jade\n🧭 Rôle : Guérisseur divin" },
-      { name: "🌙 Gabriel – Messager d’eau et de lune", image: "main/arc3.png", description: "🔤 Nom : Gavri’el — “Force de Dieu”\n🌈 Fréquence : 741 Hz\n💎 Pierres : Pierre de lune, Citrine, Cornaline\n🌠 Astres : Lune, Neptune\n🪬 Symboles : harpe lunaire, perles marines\n🧭 Rôle : Messager divin" },
-      { name: "🔥 Uriel – Alchimiste du feu cosmique", image: "main/arc4.png", description: "🔤 Nom : Uriel — “Lumière de Dieu”\n🌈 Fréquence : 852 Hz\n💎 Pierres : Ambre, Pyrite, Hématite\n🌠 Astres : Uranus, Soleil\n🪬 Symboles : sphère incandescente, forge céleste\n🧭 Rôle : Porteur de sagesse divine" },
-      { name: "🌸 Chamuel – Gardien du jardin sacré", image: "main/arc5.png", description: "🔤 Nom : Chamuel — “Celui qui voit Dieu”\n🌈 Fréquence : 639 Hz\n💎 Pierres : Quartz rose, Rhodonite\n🌠 Astres : Vénus, Lune\n🪬 Symboles : cœur rayonnant, colombe\n🧭 Rôle : Amour inconditionnel" },
-      { name: "☀️ Jophiel – Oracle solaire", image: "main/arc6.png", description: "🔤 Nom : Jophiel — “Beauté de Dieu”\n🌈 Fréquence : 963 Hz\n💎 Pierres : Topaze dorée, Kunzite\n🌠 Astres : Jupiter, Soleil\n🪬 Symboles : plume dorée, miroir céleste\n🧭 Rôle : Beauté et inspiration" },
-      { name: "🔮 Zadkiel – Prêtre de la flamme violette", image: "main/arc7.png", description: "🔤 Nom : Zadkiel — “Justice de Dieu”\n🌈 Fréquence : 432 Hz\n💎 Pierres : Améthyste, Sugilite\n🌠 Astres : Saturne, Pluton\n🪬 Symboles : flamme violette, sablier cosmique\n🧭 Rôle : Transmutation et pardon" },
-      { name: "🌌 Haniel – Reine lunaire intuitive", image: "main/arc8.png", description: "🔤 Nom : Haniel — “Grâce de Dieu”\n🌈 Fréquence : 417 Hz\n💎 Pierres : Pierre de lune, Sélénite\n🌠 Astres : Lune, Vénus\n🪬 Symboles : croissant lunaire, miroir d’eau\n🧭 Rôle : Féminité sacrée" },
-      { name: "🌀 Raziel – Voyageur interdimensionnel", image: "main/arc9.png", description: "🔤 Nom : Raziel — “Secret de Dieu”\n🌈 Fréquence : 888 Hz\n💎 Pierres : Cristal de roche, Moldavite\n🌠 Astres : Uranus, Mercure\n🪬 Symboles : livre scellé, spirale dorée\n🧭 Rôle : Mystères et lois universelles" },
-      { name: "🕯️ Azraël – Sage funéraire", image: "main/arc10.png", description: "🔤 Nom : Azraël — “Celui que Dieu aide”\n🌈 Fréquence : 396 Hz\n💎 Pierres : Calcite crème, Rose des sables\n🌠 Astres : Saturne, Pluton\n🪬 Symboles : sablier, plume blanche\n🧭 Rôle : Paix des âmes" },
-      { name: "🪘 Sandalphon – Veilleur des racines", image: "main/arc11.png", description: "🔤 Nom : Sandalphon — “Frère”\n🌈 Fréquence : 285 Hz\n💎 Pierres : Turquoise, Quartz bleu\n🌠 Astres : Terre, Neptune\n🪬 Symboles : tambour cosmique, racines lumineuses\n🧭 Rôle : Ancrage et musique" },
-      { name: "✨ Métatron – Maître géomètre", image: "main/arc12.png", description: "🔤 Nom : Métatron — “Trône de Dieu”\n🌈 Fréquence : 999 Hz\n💎 Pierres : Tourmaline melon, Platine\n🌠 Astres : Pléiades, Sirius\n🪬 Symboles : cube de Métatron, vortex\n🧭 Rôle : Ascension et géométrie divine" }
+      { name: "🛡️ Michaël – Guerrier céleste tribal", image: "arc1.png", description: "🔤 Nom : Mikhaël — “Qui est comme Dieu ?”\n🌈 Fréquence : 528 Hz\n💎 Pierres : Lapis-lazuli, Sodalite, Tourmaline noire\n🌞 Astres : Soleil, Mars\n🪬 Symboles : épée flamboyante, bouclier solaire\n🧭 Rôle : Protecteur des justes" },
+      { name: "🌿 Raphaël – Chamane guérisseur végétal", image: "arc2.png", description: "🔤 Nom : Refael — “Dieu guérit”\n🌈 Fréquence : 639 Hz\n💎 Pierres : Malachite, Émeraude, Fluorite verte\n🌠 Astres : Mercure, Vénus\n🪬 Symboles : bâton de soin, temple de jade\n🧭 Rôle : Guérisseur divin" },
+      { name: "🌙 Gabriel – Messager d’eau et de lune", image: "arc3.png", description: "🔤 Nom : Gavri’el — “Force de Dieu”\n🌈 Fréquence : 741 Hz\n💎 Pierres : Pierre de lune, Citrine, Cornaline\n🌠 Astres : Lune, Neptune\n🪬 Symboles : harpe lunaire, perles marines\n🧭 Rôle : Messager divin" },
+      { name: "🔥 Uriel – Alchimiste du feu cosmique", image: "arc4.png", description: "🔤 Nom : Uriel — “Lumière de Dieu”\n🌈 Fréquence : 852 Hz\n💎 Pierres : Ambre, Pyrite, Hématite\n🌠 Astres : Uranus, Soleil\n🪬 Symboles : sphère incandescente, forge céleste\n🧭 Rôle : Porteur de sagesse divine" },
+      { name: "🌸 Chamuel – Gardien du jardin sacré", image: "arc5.png", description: "🔤 Nom : Chamuel — “Celui qui voit Dieu”\n🌈 Fréquence : 639 Hz\n💎 Pierres : Quartz rose, Rhodonite\n🌠 Astres : Vénus, Lune\n🪬 Symboles : cœur rayonnant, colombe\n🧭 Rôle : Amour inconditionnel" },
+      { name: "☀️ Jophiel – Oracle solaire", image: "arc6.png", description: "🔤 Nom : Jophiel — “Beauté de Dieu”\n🌈 Fréquence : 963 Hz\n💎 Pierres : Topaze dorée, Kunzite\n🌠 Astres : Jupiter, Soleil\n🪬 Symboles : plume dorée, miroir céleste\n🧭 Rôle : Beauté et inspiration" },
+      { name: "🔮 Zadkiel – Prêtre de la flamme violette", image: "arc7.png", description: "🔤 Nom : Zadkiel — “Justice de Dieu”\n🌈 Fréquence : 432 Hz\n💎 Pierres : Améthyste, Sugilite\n🌠 Astres : Saturne, Pluton\n🪬 Symboles : flamme violette, sablier cosmique\n🧭 Rôle : Transmutation et pardon" },
+      { name: "🌌 Haniel – Reine lunaire intuitive", image: "arc8.png", description: "🔤 Nom : Haniel — “Grâce de Dieu”\n🌈 Fréquence : 417 Hz\n💎 Pierres : Pierre de lune, Sélénite\n🌠 Astres : Lune, Vénus\n🪬 Symboles : croissant lunaire, miroir d’eau\n🧭 Rôle : Féminité sacrée" },
+      { name: "🌀 Raziel – Voyageur interdimensionnel", image: "arc9.png", description: "🔤 Nom : Raziel — “Secret de Dieu”\n🌈 Fréquence : 888 Hz\n💎 Pierres : Cristal de roche, Moldavite\n🌠 Astres : Uranus, Mercure\n🪬 Symboles : livre scellé, spirale dorée\n🧭 Rôle : Mystères et lois universelles" },
+      { name: "🕯️ Azraël – Sage funéraire", image: "arc10.png", description: "🔤 Nom : Azraël — “Celui que Dieu aide”\n🌈 Fréquence : 396 Hz\n💎 Pierres : Calcite crème, Rose des sables\n🌠 Astres : Saturne, Pluton\n🪬 Symboles : sablier, plume blanche\n🧭 Rôle : Paix des âmes" },
+      { name: "🪘 Sandalphon – Veilleur des racines", image: "arc11.png", description: "🔤 Nom : Sandalphon — “Frère”\n🌈 Fréquence : 285 Hz\n💎 Pierres : Turquoise, Quartz bleu\n🌠 Astres : Terre, Neptune\n🪬 Symboles : tambour cosmique, racines lumineuses\n🧭 Rôle : Ancrage et musique" },
+      { name: "✨ Métatron – Maître géomètre", image: "arc12.png", description: "🔤 Nom : Métatron — “Trône de Dieu”\n🌈 Fréquence : 999 Hz\n💎 Pierres : Tourmaline melon, Platine\n🌠 Astres : Pléiades, Sirius\n🪬 Symboles : cube de Métatron, vortex\n🧭 Rôle : Ascension et géométrie divine" }
     ];
 
     const vibCards = [
-      { name: "🛡️ Carte de Protection", image: "main/vib1.png", description: "Fonction : Dissout les intrusions\nFréquence : 417 Hz\nPierres : Obsidienne, Tourmaline noire\nInvocation : 'Je suis entouré(e) d’un cercle de lumière...'" },
-      { name: "🌿 Carte de Guérison", image: "main/vib2.png", description: "Fonction : Libère les mémoires\nFréquence : 528 Hz\nPierres : Malachite, Fluorite\nInvocation : 'Je suis un temple vivant.'" },
-      { name: "🧭 Carte de Guidance", image: "main/vib3.png", description: "Fonction : Active l’intuition\nFréquence : 852 Hz\nPierres : Labradorite, Lapis lazuli\nInvocation : 'Je reçois les signes du chemin.'" },
-      { name: "💗 Carte d’Amour", image: "main/vib4.png", description: "Fonction : Dissout les blocages affectifs\nFréquence : 639 Hz\nPierres : Quartz rose, Rhodonite\nInvocation : 'Je suis amour, je suis unité.'" },
-      { name: "🦉 Carte de Sagesse", image: "main/vib5.png", description: "Fonction : Accès aux plans supérieurs\nFréquence : 963 Hz\nPierres : Améthyste, Cristal de roche\nInvocation : 'Je suis un canal de vérité.'" }
+      { name: "🛡️ Carte de Protection", image: "vib1.png", description: "Fonction : Dissout les intrusions\nFréquence : 417 Hz\nPierres : Obsidienne, Tourmaline noire\nInvocation : 'Je suis entouré(e) d’un cercle de lumière...'" },
+      { name: "🌿 Carte de Guérison", image: "vib2.png", description: "Fonction : Libère les mémoires\nFréquence : 528 Hz\nPierres : Malachite, Fluorite\nInvocation : 'Je suis un temple vivant.'" },
+      { name: "🧭 Carte de Guidance", image: "vib3.png", description: "Fonction : Active l’intuition\nFréquence : 852 Hz\nPierres : Labradorite, Lapis lazuli\nInvocation : 'Je reçois les signes du chemin.'" },
+      { name: "💗 Carte d’Amour", image: "vib4.png", description: "Fonction : Dissout les blocages affectifs\nFréquence : 639 Hz\nPierres : Quartz rose, Rhodonite\nInvocation : 'Je suis amour, je suis unité.'" },
+      { name: "🦉 Carte de Sagesse", image: "vib5.png", description: "Fonction : Accès aux plans supérieurs\nFréquence : 963 Hz\nPierres : Améthyste, Cristal de roche\nInvocation : 'Je suis un canal de vérité.'" }
     ];
 
     let drawnArc = [];
@@ -145,3 +154,4 @@
   </script>
 </body>
 </html>
+
