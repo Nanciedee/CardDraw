@@ -74,6 +74,21 @@
     <button id="reshuffle">🔄 Réinitialiser</button>
   </div>
 
+  <div id="displayZone" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 30px;">
+    <div id="arcSlot" class="paper" style="width: 300px; min-height: 400px; padding: 15px; display: none;">
+        <h3 style="color:var(--primary)">Carte Arc</h3>
+        <img id="arcImg" src="" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <h4 id="arcTitle"></h4>
+        <p id="arcDesc" style="font-size: 0.9em; text-align: left; white-space: pre-line;"></p>
+    </div>
+    <div id="vibSlot" class="paper" style="width: 300px; min-height: 400px; padding: 15px; display: none;">
+        <h3 style="color:var(--primary)">Carte Vib</h3>
+        <img id="vibImg" src="" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <h4 id="vibTitle"></h4>
+        <p id="vibDesc" style="font-size: 0.9em; text-align: left; white-space: pre-line;"></p>
+    </div>
+  </div>
+
   <div id="modal">
     <div id="modalContent">
       <span class="closeModal">&times;</span>
@@ -238,3 +253,4 @@ Ainsi soit-il."`
   </script>
 </body>
 </html>
+
