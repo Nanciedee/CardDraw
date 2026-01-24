@@ -208,31 +208,53 @@ Ainsi soit-il."`
       return deck[randomIndex];
     }
 
-    // Affichage de la carte
-    function showCard(card) {
-      document.getElementById("modalImage").src = card.image;
-      document.getElementById("modalTitle").textContent = card.name;
-      document.getElementById("modalDescription").textContent = card.description;
-      document.getElementById("modal").style.display = "flex";
+    // Affichage des cartes sur la page
+    function displayCardOnPage(card, type) {
+      const slotId = type === 'arc' ? "arcSlot" : "vibSlot";
+      const imgId = type === 'arc' ? "arcImg" : "vibImg";
+      const titleId = type === 'arc' ? "arcTitle" : "vibTitle";
+      const descId = type === 'arc' ? "arcDesc" : "vibDesc";
+
+      document.getElementById(slotId).style.display = "block";
+      document.getElementById(imgId).src = card.image;
+      document.getElementById(titleId).textContent = card.name;
+      document.getElementById(descId).textContent = card.description;
       
+      // Ajouter à l'historique
+      addToHistory(card);
+    }
+
+    function addToHistory(card) {
       const li = document.createElement("li");
       const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
       li.innerHTML = `<span>${card.name}</span> <span class="time">${timeStr}</span>`;
       const list = document.getElementById("historyList");
       list.insertBefore(li, list.firstChild);
+      localStorage.setItem("tirageHistory", list.innerHTML);
+    }
 
       // Sauvegarde dans le navigateur
       localStorage.setItem("tirageHistory", list.innerHTML);
     }
 
-    // Écouteurs de clics
-    document.getElementById("drawArc").addEventListener("click", () => showCard(drawCard(arcCards, drawnArc)));
-    document.getElementById("drawVib").addEventListener("click", () => showCard(drawCard(vibCards, drawnVib)));
-    
+    // Écouteurs de clics mis à jour
+    document.getElementById("drawArc").addEventListener("click", () => {
+        const card = drawCard(arcCards, drawnArc);
+        displayCardOnPage(card, 'arc');
+    });
+
+    document.getElementById("drawVib").addEventListener("click", () => {
+        const card = drawCard(vibCards, drawnVib);
+        displayCardOnPage(card, 'vib');
+    });
+
+    // Mettez à jour le bouton réinitialiser pour cacher aussi les cartes
     document.getElementById("reshuffle").addEventListener("click", () => {
       if(confirm("Voulez-vous vraiment effacer l'historique ?")) {
         drawnArc = []; drawnVib = [];
         document.getElementById("historyList").innerHTML = "";
+        document.getElementById("arcSlot").style.display = "none";
+        document.getElementById("vibSlot").style.display = "none";
         localStorage.removeItem("tirageHistory");
         alert("Réinitialisé !");
       }
@@ -253,4 +275,5 @@ Ainsi soit-il."`
   </script>
 </body>
 </html>
+
 
