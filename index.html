@@ -152,9 +152,20 @@
     }
 
     function addToHistory(card) {
+      const now = new Date();
+      // Format de la date (ex: 24 janv.)
+      const dateStr = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      // Format de l'heure (ex: 14:05)
+      const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
       const li = document.createElement("li");
-      const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      li.innerHTML = `<span>${card.name}</span> <span class="time">${timeStr}</span>`;
+      li.innerHTML = `
+        <span>${card.name}</span> 
+        <div class="time-info">
+            <span class="date-badge">${dateStr}</span>
+            <span class="time">${timeStr}</span>
+        </div>`;
+        
       const list = document.getElementById("historyList");
       list.insertBefore(li, list.firstChild);
       localStorage.setItem("tirageHistory", list.innerHTML);
@@ -189,4 +200,5 @@
   </script>
 </body>
 </html>
+
 
