@@ -1,206 +1,893 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Draw App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tirage Cartes Arc & Vib</title>
+
+  <!-- CSS intégré -->
   <style>
+    :root {
+      --bg: #f6f7fb;
+      --card-bg: #ffffff;
+      --accent: #4a90e2;
+      --muted: #666;
+      --radius: 12px;
+    }
+    html,body { height:100%; margin:0; }
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f4;
-      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
+      -webkit-font-smoothing:antialiased;
     }
+
     h1 {
-      margin-bottom: 20px;
+      margin: 6px 0 12px;
+      font-size: 1.6rem;
     }
+
+    .controls {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom: 14px;
+    }
+
     button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(74,144,226,0.15);
+    }
+    button.secondary {
+      background: #6c6f73;
+    }
+    button:active { transform: translateY(1px); }
+
+    #cardContainer {
+      width: 100%;
+      max-width: 760px;
+      margin-top: 6px;
+      display:flex;
+      justify-content:center;
+    }
+
+    /* small preview when card drawn */
+    #cardPreview {
+      background: var(--card-bg);
+      padding: 14px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      width:100%;
+      max-width:720px;
+    }
+
+    #cardPreview img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+      object-fit: contain;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       cursor: pointer;
     }
-    #result img {
-      display: block;
-      margin: 10px auto;
-      max-width: 150px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+    #cardPreview .meta {
+      text-align:left;
+      flex:1;
+      min-width:0;
     }
+    #cardPreview .meta h3 {
+      margin:0 0 6px;
+      font-size:1.0rem;
+      line-height:1.2;
+      word-break:break-word;
+    }
+    #cardPreview .meta p {
+      margin:0;
+      color:var(--muted);
+      font-size:0.9rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Modal overlay */
+    #modal {
+      display:none;
+      position:fixed;
+      left:0; top:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.65);
+      z-index: 1200;
+      justify-content:center;
+      align-items:center;
+      padding: 20px;
+    }
+
+    #modal.open { display:flex; }
+
+    #modalContent {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      overflow:auto;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 12px 36px rgba(8,15,30,0.25);
+      text-align:left;
+    }
+
+    .closeModal {
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+      color:#444;
+      margin-left:8px;
+    }
+
+    #modalImage {
+      display:block;
+      margin: 6px auto 14px auto;
+      width: 90%;
+      max-width: 560px; /* ajuste la taille maximale de l'image dans le modal */
+      height: auto;
+      border-radius: 12px;
+      object-fit: contain;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    #modalTitle {
+      margin: 6px 0;
+      font-size: 1.25rem;
+      line-height: 1.25;
+    }
+
+    #modalDescription {
+      margin-top: 10px;
+      color: #222;
+      white-space: pre-wrap; /* préserve les retours à la ligne dans les descriptions */
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    /* Historique */
     #history {
-      margin-top: 20px;
-      text-align: left;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      margin-top: 18px;
+      width: 100%;
+      max-width: 760px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
     }
-    #history ul {
-      list-style: none;
-      padding: 0;
+    #history h3 { margin:0 0 8px 0; font-size:1rem; }
+    #historyList { list-style: none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; max-height:300px; overflow:auto; }
+    .historyItem {
+      display:flex; gap:10px; align-items:center; padding:8px; border-radius:8px; cursor:pointer;
     }
-    #history li {
-      margin: 10px 0;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-    }
-    #history img {
-      width: 40px;
-      vertical-align: middle;
-      border-radius: 4px;
-      margin-left: 5px;
+    .historyItem:hover { background:#f2f5ff; }
+    .historyItem img { width:48px; height:auto; border-radius:6px; object-fit:contain; }
+    .historyItem .hmeta { font-size:0.95rem; color:#111; }
+    .historyItem .hmeta small { display:block; color:var(--muted); font-size:0.8rem; }
+
+    /* responsive adjustments */
+    @media (max-width:600px) {
+      #cardPreview img { width:86px; }
+      #modalImage { max-width:92vw; }
     }
   </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réflexion Matinale - My1Prayer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Great+Vibes&family=Delius&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #FFF5E1; font-family: 'Lato', sans-serif; color: #4A4A4A; min-height: 100vh; padding: 1rem; }
+        .glass { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.6); border-radius: 2.5rem; }
+        .paper { background-color: #fdfaf0; border: 1px solid #faedcd; border-radius: 1.5rem; }
+        .serif { font-family: 'Playfair Display', serif; color: #1e1b4b; }
+        .handwritten { font-family: 'Great Vibes', cursive; color: #b45309; font-size: 3.5rem; }
+        .scripture { font-family: 'Delius', cursive; }
+        canvas { background: white; border: 2px dashed #cbd5e1; border-radius: 1.5rem; cursor: crosshair; touch-action: none; }
+        .mood-btn { font-size: 3rem; transition: transform 0.2s; cursor: pointer; opacity: 0.6; }
+        .active-mood { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4)); }
+    </style>
 </head>
 <body>
-  <h1>🎴 Arc & Vib Card Draw</h1>
-  <button onclick="drawPair()">Draw Cards</button>
-  <button onclick="shuffleDecks()">🔄 Shuffle</button>
-  <button onclick="exportHistory()">📁 Export History</button>
 
-  <div id="result"></div>
+  <h1>✨ Tirage Cartes Arc & Vib ✨</h1>
 
+  <div class="controls">
+    <button id="btnDrawArc">Tirer une carte Arc</button>
+    <button id="btnDrawVib">Tirer une carte Vib</button>
+    <button id="btnReshuffle" class="secondary">🔁 Reshuffle (remet le deck)</button>
+  </div>
+
+  <div id="cardContainer">
+    <div id="cardPreview" style="display:none;">
+      <img id="previewImg" src="" alt="Carte tirée">
+      <div class="meta">
+        <h3 id="previewName"></h3>
+        <p id="previewType"></p>
+      </div>
+<body class="flex flex-col items-center">
+
+    <div class="max-w-5xl w-full glass p-6 md:p-12 shadow-2xl my-6">
+        
+        <div class="text-center mb-10">
+            <h1 class="handwritten">Réflexion Matinale</h1>
+            <p class="serif uppercase tracking-widest text-xs font-bold">Mon Espace My1Prayer</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+            <div class="space-y-6">
+                <div class="paper p-6 text-center shadow-sm border-l-4 border-amber-400">
+                    <p class="scripture text-lg italic text-gray-700">"Ne vous inquiétez de rien ; mais en toute chose faites connaître vos besoins à Dieu..."</p>
+                    <p class="text-right text-xs mt-2 font-bold text-amber-700 italic">Philippiens 4:6</p>
+                </div>
+                <div class="p-6 bg-white/30 rounded-[2rem] border border-white/50">
+                    <h3 class="serif font-bold uppercase text-xs mb-3 flex gap-2"><i data-lucide="pen-tool" size="18"></i> Ma Prière</h3>
+                    <textarea id="prayerText" oninput="saveData()" class="w-full h-40 bg-transparent border-none focus:ring-0 text-gray-700 scripture text-lg" placeholder="Seigneur..."></textarea>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="p-6 bg-white/30 rounded-[2rem] border border-white/50 text-center">
+                    <h3 class="serif font-bold uppercase text-xs mb-4">Mon cœur aujourd'hui</h3>
+                    <div class="flex justify-around mb-6">
+                        <span onclick="setMood('🤩', this)" class="mood-btn">🤩</span>
+                        <span onclick="setMood('✨', this)" class="mood-btn">✨</span>
+                        <span onclick="setMood('💛', this)" class="mood-btn">💛</span>
+                        <span onclick="setMood('😄', this)" class="mood-btn">😄</span>
+                        <span onclick="setMood('😔', this)" class="mood-btn">😔</span>
+                    </div>
+                    <div id="weeklyHistory" class="grid grid-cols-7 gap-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <h3 class="serif font-bold uppercase text-xs flex gap-2 items-center"><i data-lucide="palette" size="20"></i> Espace Créatif</h3>
+                
+                <div class="flex flex-wrap gap-3 items-center bg-white/40 p-2 rounded-3xl border border-white/60">
+                    <a href="https://nanciedee.github.io/CardDraw/" target="_blank" class="px-4 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-bold uppercase hover:bg-indigo-700 transition flex items-center gap-1 shadow-md">
+                        <i data-lucide="layers" size="14"></i> Tirer une Carte
+                    </a>
+
+                    <div class="h-6 w-[1px] bg-indigo-200 mx-1"></div>
+
+                    <label class="cursor-pointer bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-amber-200">
+                        <i data-lucide="image" size="14" class="inline"></i> Image <input type="file" id="imageLoader" class="hidden" accept="image/*">
+                    </label>
+                    
+                    <input type="color" id="color" class="w-8 h-8 rounded-full cursor-pointer bg-transparent border-none" value="#4f46e5">
+                    
+                    <button onclick="clearCanvas()" class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[10px] font-bold uppercase">Effacer</button>
+                </div>
+            </div>
+            
+            <div class="relative group">
+                <canvas id="canvas" class="w-full h-[450px] shadow-inner"></canvas>
+                <div class="absolute bottom-4 right-6 text-[10px] text-gray-400 italic pointer-events-none opacity-60">
+                    Double-cliquez pour écrire au clavier
+                </div>
+            </div>
+        </div>
+</div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" aria-hidden="true">
+    <div id="modalContent" role="dialog" aria-modal="true">
+      <span class="closeModal" id="closeModalBtn" title="Fermer">&times;</span>
+      <img id="modalImage" src="" alt="Carte">
+      <h2 id="modalTitle"></h2>
+      <div id="modalDescription"></div>
+    </div>
+  </div>
+
+  <!-- Historique -->
   <div id="history">
-    <h2>History</h2>
+    <h3>Historique des tirages</h3>
     <ul id="historyList"></ul>
   </div>
 
+  <!-- SCRIPT -->
   <script>
-    // Full decks (image paths point directly to root folder)
-    const fullArcDeck = [
-      { name: "Arc 1", image: "arc1.png" },
-      { name: "Arc 2", image: "arc2.png" },
-      { name: "Arc 3", image: "arc3.png" },
-      { name: "Arc 4", image: "arc4.png" },
-      { name: "Arc 5", image: "arc5.png" },
-      { name: "Arc 6", image: "arc6.png" },
-      { name: "Arc 7", image: "arc7.png" },
-      { name: "Arc 8", image: "arc8.png" },
-      { name: "Arc 9", image: "arc9.png" },
-      { name: "Arc 10", image: "arc10.png" },
-      { name: "Arc 11", image: "arc11.png" },
-      { name: "Arc 12", image: "arc12.png" }
-    ];
+    /* ---- Données : Arc 1 → Arc 12 (texte complet fourni) ---- */
+    const arcCards = [
+{
+    name: "🛡️ Michaël – Guerrier céleste tribal",
+    image: "arc1.png",
+    description: `🔤 Nom : Mikhaël (hébreu מִיכָאֵל) — “Qui est comme Dieu ?”
+🌈 Fréquence vibratoire : 528 Hz — fréquence de transformation, réparation de l’ADN, purification.
+💎 Pierres associées : Lapis-lazuli, Sodalite, Tourmaline noire
+🌞 Astres régents : Soleil, Mars — feu sacré, autorité, courage.
+🪬 Symboles : épée flamboyante, bouclier solaire, balance cosmique, cape étoilée.
+🧭 Rôle : Protecteur des justes, chef des armées célestes, défenseur contre les forces du mal.
+📜 Traditions :
+  - Christianisme : Combattant du dragon dans l’Apocalypse.
+  - Judaïsme : Ange protecteur du peuple hébreu.
+  - Islam : Mikail, ange de la pluie et de la miséricorde.
+🧿 Noms associés : Saint Michel, Mikael, Melek Mika’il`
+  },
+  {
+    name: "🌿 Raphaël – Chamane guérisseur végétal",
+    image: "arc2.png",
+    description: `🔤 Nom : Refael (hébreu רְפָאֵל) — “Dieu guérit”
+🌈 Fréquence vibratoire : 639 Hz — fréquence de l’amour, de la compassion, de la guérison relationnelle.
+💎 Pierres associées : Malachite, Émeraude, Fluorite verte
+🌠 Astres régents : Mercure, Vénus — soin, harmonie, régénération.
+🪬 Symboles : bâton de soin, temple de jade, tatouages floraux, lumière verte.
+🧭 Rôle : Guérisseur divin, protecteur des voyageurs, des amoureux et des âmes blessées.
+📜 Traditions :
+  - Christianisme : Guide de Tobie, guérisseur des corps et des âmes.
+  - Judaïsme : Ange de la médecine et de la guérison.
+  - Islam : Associé à Israfil, l’ange du cor du Jugement.
+🧿 Noms associés : Rufa’il, Israfil (selon certaines traditions)`
+  },
+  {
+    name: "🌙 Gabriel – Messager d’eau et de lune",
+    image: "arc3.png",
+    description: `🔤 Nom : Gavri’el (hébreu גַּבְרִיאֵל) — “Force de Dieu”
+🌈 Fréquence vibratoire : 741 Hz — fréquence de la clarté, de la purification et de l’intuition.
+💎 Pierres associées : Pierre de lune, Citrine, Cornaline
+🌠 Astres régents : Lune, Neptune — fluidité, rêve, transmission mystique.
+🪬 Symboles : harpe lunaire, perles marines, coquillages vibrants, robe nacrée.
+🧭 Rôle : Messager divin, porteur de révélations, guide des artistes et communicants.
+📜 Traditions :
+  - Christianisme : Annonciateur de la naissance de Jésus.
+  - Judaïsme : Ange de la pureté et de la révélation.
+  - Islam : Jibril, transmetteur du Coran à Muhammad.
+🧿 Noms associés : Djibril, Gavriel, Jibril`
+  },
+  {
+    name: "🔥 Uriel – Alchimiste du feu cosmique",
+    image: "arc4.png",
+    description: `🔤 Nom : Uriel (hébreu אוּרִיאֵל) — “Lumière de Dieu” ou “Feu de Dieu”
+🌈 Fréquence vibratoire : 852 Hz — fréquence de l’éveil spirituel, de la vision intérieure et de la vérité cosmique.
+💎 Pierres associées : Ambre, Pyrite, Hématite
+🌠 Astres régents : Uranus, Soleil — illumination soudaine, sagesse, révélation.
+🪬 Symboles : sphère incandescente, forge céleste, gants dorés, glyphes alchimiques.
+🧭 Rôle : Porteur de sagesse divine, juge cosmique, gardien des secrets sacrés.
+📜 Traditions :
+  - Christianisme ésotérique : Archange de la connaissance et de l’été.
+  - Apocryphes : Interprète des prophéties, ange du châtiment.
+  - Occultisme : Alchimiste céleste, visionnaire.
+🧿 Noms associés : Nuriel, Phanuel, Suriel, Sariel, Auriel`
+  },
+  {
+    name: "🌸 Chamuel – Gardien du jardin sacré",
+    image: "arc5.png",
+    description: `🔤 Nom : Chamuel, Camael, Kamael — “Celui qui voit Dieu”
+🌈 Fréquence vibratoire : 639 Hz — fréquence de l’amour, de la compassion, de la guérison relationnelle.
+💎 Pierres associées : Quartz rose, Rhodonite, Chrysoprase
+🌠 Astres régents : Vénus, Lune — douceur, harmonie, tendresse.
+🪬 Symboles : cœur rayonnant, colombe, vortex rose, sceau d’union.
+🧭 Rôle : Archange de l’amour inconditionnel, de la paix intérieure, de la réconciliation.
+📜 Traditions :
+  - Mystique chrétienne : protecteur des relations, guérisseur du cœur.
+  - Ésotérisme : guide des âmes vers l’amour divin.
+🧿 Noms associés : Camael, Kamael, Aniel`
+  },
+  {
+    name: "☀️ Jophiel – Oracle solaire des sphères supérieures",
+    image: "arc6.png",
+    description: `🔤 Nom : Jophiel, Iophiel, Zophiel — “Beauté de Dieu”
+🌈 Fréquence vibratoire : 963 Hz — fréquence de la conscience divine, de l’illumination spirituelle.
+💎 Pierres associées : Topaze dorée, Rubellite, Kunzite
+🌠 Astres régents : Jupiter, Soleil — expansion, sagesse, rayonnement.
+🪬 Symboles : plume dorée, fleur cosmique, miroir céleste.
+🧭 Rôle : Archange de la beauté, de l’inspiration, de la clarté mentale.
+📜 Traditions :
+  - Kabbale : gardienne de la Torah et de la sagesse divine.
+  - Mystique chrétienne : guide des artistes et des penseurs.
+🧿 Noms associés : Zophiel, Dina, Iofiel`
+  },
+  {
+    name: "🔮 Zadkiel – Prêtre de la flamme violette",
+    image: "arc7.png",
+    description: `🔤 Nom : Zadkiel, Zedekiel — “Justice de Dieu”
+🌈 Fréquence vibratoire : 432 Hz — fréquence de l’ancrage, de la paix intérieure, de la mémoire cellulaire.
+💎 Pierres associées : Améthyste, Sugilite, Lapis-lazuli
+🌠 Astres régents : Saturne, Pluton — transmutation, karma, profondeur.
+🪬 Symboles : flamme violette, livre des âmes, sablier cosmique.
+🧭 Rôle : Archange de la miséricorde, de la transmutation, du pardon.
+📜 Traditions :
+  - Mystique chrétienne : ange du pardon et de la transformation.
+  - New Age : gardien de la flamme violette.
+🧿 Noms associés : Zedekiel, Sachiel, Tzadkiel`
+  },
+  {
+    name: "🌌 Haniel – Reine lunaire intuitive",
+    image: "arc8.png",
+    description: `🔤 Nom : Haniel, Anael, Aniel — “Grâce de Dieu”
+🌈 Fréquence vibratoire : 417 Hz — fréquence de la libération émotionnelle et du retour à l’harmonie.
+💎 Pierres associées : Pierre de lune, Labradorite, Sélénite
+🌠 Astres régents : Lune, Vénus — intuition, sensualité, mystère.
+🪬 Symboles : croissant lunaire, éventail nacré, miroir d’eau.
+🧭 Rôle : Archange de la féminité sacrée, des émotions, des cycles.
+📜 Traditions :
+  - Kabbale : guide des rituels lunaires et des initiations féminines.
+  - Mystique chrétienne : ange de la joie et de la grâce.
+🧿 Noms associés : Anael, Aniel, Haniel`
+  },
+  {
+    name: "🌀 Raziel – Voyageur interdimensionnel",
+    image: "arc9.png",
+    description: `🔤 Nom : Raziel — “Secret de Dieu”
+🌈 Fréquence vibratoire : 888 Hz — fréquence de la connaissance cachée, de l’activation multidimensionnelle.
+💎 Pierres associées : Cristal de roche, Moldavite, Obsidienne céleste
+🌠 Astres régents : Uranus, Mercure — révélation, mystère, intelligence cosmique.
+🪬 Symboles : livre scellé, spirale dorée, œil étoilé.
+🧭 Rôle : Archange des mystères, des lois universelles, des archives akashiques.
+📜 Traditions :
+  - Kabbale : auteur du Livre de Raziel, transmis à Adam.
+  - Ésotérisme : maître des codes sacrés et des géométries divines.
+🧿 Noms associés : Ratziel, Galizur`
+  },
+  {
+    name: "🕯️ Azraël – Sage funéraire de la renaissance",
+    image: "arc10.png",
+    description: `🔤 Nom : Azraël, Azriel — “Celui que Dieu aide”
+🌈 Fréquence vibratoire : 396 Hz — fréquence de la libération du passé, du deuil, de la transmutation karmique.
+💎 Pierres associées : Calcite crème, Chrysocolle, Rose des sables
+🌠 Astres régents : Saturne, Pluton — fin de cycle, passage, profondeur.
+🪬 Symboles : sablier, voile, clé d’ombre, plume blanche.
+🧭 Rôle : Archange du passage, du deuil, de la paix des âmes.
+📜 Traditions :
+  - Islam : ange de la mort, chargé de recueillir les âmes.
+  - Mystique chrétienne : guide des âmes vers la lumière.
+🧿 Noms associés : Azriel, Izrail, Azariel`
+  },
+  {
+    name: "🪘 Sandalphon – Veilleur des racines et des chants terrestres",
+    image: "arc11.png",
+    description: `🔤 Nom : Sandalphon — “Frère” ou “Co-créateur”
+🌈 Fréquence vibratoire : 285 Hz — fréquence de la régénération physique, de l’ancrage et de la matière sacrée.
+💎 Pierres associées : Turquoise, Quartz bleu, Rhodonite
+🌠 Astres régents : Terre, Neptune — enracinement, rêve, vibration tellurique.
+🪬 Symboles : spirale terrestre, tambour cosmique, racines lumineuses.
+🧭 Rôle : Archange de l’ancrage, de la musique sacrée, des prières incarnées.
+📜 Traditions :
+  - Kabbale : ancien prophète Élie transformé en archange.
+  - Mystique : tisseur des prières humaines vers le divin.
+🧿 Noms associés : Sandalphon, Sandalfin`
+  },
+  {
+    name: "✨ Métatron – Maître de la géométrie céleste",
+    image: "arc12.png",
+    description: `🔤 Nom : Métatron — “Celui qui occupe le trône à côté de Dieu”
+🌈 Fréquence vibratoire : 999 Hz — fréquence de l’unité divine, de l’ascension et de la géométrie sacrée.
+💎 Pierres associées : Tourmaline melon d’eau, Rhodochrosite, Platine
+🌠 Astres régents : Pléiades, Sirius, énergie cosmique — multidimensionnalité, lumière pure, conscience galactique.
+🪬 Symboles : cube de Métatron, trône céleste, vortex arc-en-ciel.
+🧭 Rôle : Archange de l’ascension, gardien des archives célestes, maître des géométries divines.
+📜 Traditions :
+  - Kabbale : ancien prophète Hénoch transformé en archange.
+  - Mystique : scribe céleste, gardien du trône divin.
+🧿 Noms associés : Mitatron, Enoch, Yofiel`
+  }
+];
 
-    const fullVibDeck = [
-      { name: "Vib 1", image: "vib1.png" },
-      { name: "Vib 2", image: "vib2.png" },
-      { name: "Vib 3", image: "vib3.png" },
-      { name: "Vib 4", image: "vib4.png" },
-      { name: "Vib 5", image: "vib5.png" }
-    ];
+    /* ---- Données : Vib 1 → Vib 5 (texte complet fourni) ---- */
+    const vibCards = [
+{
+  name: "🛡️ Carte de Protection",
+  image: "vib1.png",
+  description: `Rituel de Protection Vibratoire
+Fonction vibratoire principale : Dissout les intrusions, renforce l’aura, stabilise les champs
+Qualité divine : Bouclier énergétique, enracinement, sécurité
+Fréquence : 417 Hz
+Pierres associées : Obsidienne (transmutation, protection psychique), Tourmaline noire (ancrage), Hématite (stabilisation)
+Astre régent : Mars / Saturne
+Effet vibratoire : Dissolution des intrusions, stabilisation du champ
 
-    // Current decks
-    let arcDeck = [...fullArcDeck];
-    let vibDeck = [...fullVibDeck];
-    let history = [];
+Préparation du cercle :
+ - Allume une bougie noire ou rouge (Mars/Saturne)
+ - Trace un cercle au sol avec du sel ou de la poudre de tourmaline
+ - Fais résonner un diapason à 417 Hz ou joue une onde binaurale correspondante
 
-    function drawPair() {
-      if (arcDeck.length === 0 || vibDeck.length === 0) {
-        alert("Decks empty! Shuffle to continue.");
-        return;
+Supports vibratoires :
+ - Fréquence : 417 Hz — Active la libération et la dissolution vibratoire
+ - Pierres : Obsidienne / Tourmaline noire / Hématite — à tenir ou placer aux quatre coins du cercle
+ - Astre régent : Mars / Saturne — à invoquer pour sceller et renforcer l’intention
+
+Activation par le souffle :
+ - Inspire profondément en visualisant une lumière rouge-noire montant depuis la Terre
+ - Expire en visualisant un bouclier doré se former autour de toi
+ - Répète 7 fois, en rythme avec le son 417 Hz
+
+Invocation sacrée :
+Par la force de Mars et la sagesse de Saturne, J’appelle la vibration de Protection divine. Que l’obsidienne scelle, que le son purifie, Que mon champ soit inviolable, stable et sacré. Je suis entouré(e) d’un cercle de lumière, Nul ne peut pénétrer sans mon accord. Ainsi soit-il.
+
+Scellement énergétique :
+ - Place la carte Protection au centre du cercle
+ - Dispose les pierres autour en triangle ou carré
+ - Visualise une spirale noire et dorée montant du sol et enveloppant l’espace
+ - Termine par 3 frappes de tambour ou 3 tintements de cloche
+
+Intégration :
+ - Bois une infusion de racines (gingembre, réglisse, ortie)
+ - Note dans ton journal : “Ce qui est à moi est protégé. Ce qui ne m’appartient pas est dissous.”
+ - Laisse la carte sur ton autel pendant 3 jours
+
+Utilisation complémentaire :
+ - À répéter lors de périodes de vulnérabilité ou de transition
+ - À faire avant le sommeil pour sceller l’espace astral
+ - À utiliser pour purifier et protéger un lieu (maison, cabinet, temple)`
+},
+{
+  name: "🌿 Carte de Guérison",
+  image: "vib2.png",
+  description: `Rituel de Guérison Vibratoire
+Fonction vibratoire principale : Libère les mémoires, harmonise les corps subtils
+Qualité divine : Régénération, purification, réparation
+Fréquence : 528 Hz
+Pierres associées : Malachite (nettoyage émotionnel), Chrysoprase (apaisement), Fluorite verte (harmonisation)
+Astre régent : Lune / Chiron
+Effet vibratoire : Réparation cellulaire, libération émotionnelle
+
+Préparation de l’espace :
+ - Allume une bougie verte ou blanche (Lune/Chiron)
+ - Diffuse une huile essentielle de lavande, eucalyptus ou menthe
+ - Lance une onde binaurale ou un diapason à 528 Hz
+
+Supports vibratoires :
+ - Fréquence : 528 Hz — Réparation cellulaire, activation du cœur, purification de l’ADN
+ - Pierres : Malachite / Chrysoprase / Fluorite verte — à poser sur le cœur, le plexus ou les mains
+ - Astre régent : Lune / Chiron — à invoquer pour guider le soin et libérer les mémoires
+
+Respiration régénérante :
+ - Inspire en visualisant une lumière verte émeraude entrant par le sommet du crâne
+ - Expire en envoyant cette lumière dans les zones de tension ou de douleur
+ - Répète 9 fois, en rythme avec le son 528 Hz
+
+Invocation sacrée :
+Par la lumière de la Lune et la médecine de Chiron, J’appelle la vibration sacrée de Guérison. Que la malachite purifie, que le son répare, Que mes cellules se souviennent de leur harmonie. Je suis un temple vivant, Et je choisis la régénération. Ainsi soit-il.
+
+Soin énergétique :
+ - Place la carte Guérison sur ton cœur ou devant toi
+ - Dispose les pierres en triangle autour du corps ou de la zone à traiter
+ - Visualise une spirale verte tournant lentement dans le sens horaire
+ - Laisse le soin durer 22 minutes ou jusqu’à ce que le ressenti s’apaise
+
+Intégration :
+ - Bois une infusion de plantes médicinales (ortie, camomille, mélisse)
+ - Note dans ton journal : “Je suis en train de me réparer. Mon énergie est restaurée.”
+ - Laisse la carte sur ton autel pendant 3 jours
+
+Utilisation complémentaire :
+ - À faire lors des pleines lunes ou des transits de Chiron
+ - À intégrer dans les soins énergétiques ou les cercles de guérison
+ - À utiliser avant le sommeil pour favoriser la régénération nocturne`
+},
+{
+  name: "🧭 Carte de Guidance",
+  image: "vib3.png",
+  description: `Rituel de Guidance Vibratoire
+Fonction vibratoire principale : Active l’intuition, éclaire les choix, ouvre les voies
+Qualité divine : Clarté, discernement, orientation
+Fréquence : 852 Hz
+Pierres associées : Labradorite, Lapis lazuli, Apatite bleue
+Astre régent : Mercure / Uranus
+Effet vibratoire : Activation du 3e œil, connexion au Soi supérieur
+
+Préparation de l’espace :
+ - Allume une bougie bleue ou argentée (Mercure/Uranus)
+ - Place un objet symbolique de voyage ou de vision (boussole, plume, miroir)
+ - Lance une onde binaurale ou un diapason à 852 Hz
+
+Supports vibratoires :
+ - Fréquence : 852 Hz — Activation du 3e œil, connexion au Soi supérieur
+ - Pierres : Labradorite / Lapis lazuli / Apatite bleue — à poser sur le front, la gorge ou dans la main gauche
+ - Astre régent : Mercure / Uranus — à invoquer pour ouvrir les canaux de perception et d’inspiration
+
+Respiration intuitive :
+ - Inspire en visualisant une lumière indigo pénétrant par le front
+ - Expire en envoyant cette lumière vers le cœur et les mains
+ - Répète 11 fois, en rythme avec le son 852 Hz
+
+Invocation sacrée :
+Par la clarté de Mercure et l’éveil d’Uranus, J’appelle la vibration sacrée de Guidance. Que la labradorite éclaire, que le son révèle, Que mes pas soient guidés par la sagesse intérieure. Je suis prêt(e) à recevoir les signes, Et à suivre le chemin qui s’ouvre devant moi. Ainsi soit-il.
+
+Tirage ou canalisation :
+ - Place la carte Guidance devant toi
+ - Dispose les pierres en triangle autour de la carte
+ - Pose une question claire ou ouvre ton canal intuitif
+ - Visualise une spirale bleue tournant dans le sens horaire au niveau du front
+ - Note les images, mots ou ressentis qui émergent
+
+Intégration :
+ - Bois une infusion de plantes aériennes (verveine, sauge, bleuet)
+ - Note dans ton journal : “Je suis guidé(e) avec clarté et confiance.”
+ - Laisse la carte sur ton autel pendant 3 jours`
+},
+{
+  name: "💗 Carte d’Amour",
+  image: "vib4.png",
+  description: `Rituel d’Amour Vibratoire
+Fonction vibratoire principale : Dissout les blocages affectifs, relie à la source
+Qualité divine : Ouverture du cœur, compassion, unité
+Fréquence : 639 Hz
+Pierres associées : Quartz rose, Kunzite, Rhodonite
+Astre régent : Vénus / Terre
+Effet vibratoire : Harmonisation relationnelle, guérison affective
+
+Préparation de l’espace :
+ - Allume une bougie rose ou blanche (Vénus/Terre)
+ - Dispose des pétales de rose ou une offrande douce (miel, lait, fruits)
+ - Lance une onde binaurale ou un diapason à 639 Hz
+
+Supports vibratoires :
+ - Fréquence : 639 Hz — Harmonisation relationnelle, ouverture du cœur
+ - Pierres : Quartz rose / Kunzite / Rhodonite — à poser sur le cœur, les poignets ou dans les mains
+ - Astre régent : Vénus / Terre — à invoquer pour incarner l’amour dans la matière
+
+Respiration du cœur :
+ - Inspire en visualisant une lumière rose dorée entrant par le cœur
+ - Expire en diffusant cette lumière dans tout ton corps
+ - Répète 12 fois, en rythme avec le son 639 Hz
+
+Invocation sacrée :
+Par la douceur de Vénus et la tendresse de la Terre, J’appelle la vibration sacrée de l’Amour. Que le quartz rose m’ouvre, que le son m’apaise, Que mon cœur devienne un temple de compassion. Je suis amour, je suis lien, je suis unité. Ainsi soit-il.
+
+Rituel d’ouverture :
+ - Place la carte Amour sur ton cœur ou devant toi
+ - Dispose les pierres en cercle autour de toi ou de l’espace sacré
+ - Visualise une spirale rose-or tournant doucement dans le cœur
+ - Envoie une intention d’amour vers toi-même, une personne, ou l’univers
+
+Intégration :
+ - Bois une infusion douce (rose, camomille, mélisse)
+ - Note dans ton journal : “Je suis digne d’amour. Je suis amour incarné.”
+ - Laisse la carte sur ton autel pendant 3 jours`
+},
+{
+  name: "🦉 Carte de Sagesse",
+  image: "vib5.png",
+  description: `Rituel de Sagesse Vibratoire
+Fonction vibratoire principale : Accès aux plans supérieurs, intégration des enseignements
+Qualité divine : Vision intérieure, mémoire cosmique, vérité
+Fréquence : 963 Hz
+Pierres associées : Améthyste, Sodalite, Cristal de roche
+Astre régent : Soleil / Neptune
+Effet vibratoire : Éveil spirituel, activation de la couronne
+
+Préparation de l’espace :
+ - Allume une bougie violette ou dorée (Soleil/Neptune)
+ - Dispose un symbole de connaissance (livre sacré, plume, cristal)
+ - Lance une onde binaurale ou un diapason à 963 Hz
+
+Supports vibratoires :
+ - Fréquence : 963 Hz — Éveil spirituel, activation de la couronne, connexion divine
+ - Pierres : Améthyste / Sodalite / Cristal de roche — à poser sur le sommet du crâne, le 3e œil ou dans les mains
+ - Astre régent : Soleil / Neptune — à invoquer pour éclairer la conscience et ouvrir les archives célestes
+
+Respiration cosmique :
+ - Inspire en visualisant une lumière blanche-violette descendant du cosmos
+ - Expire en diffusant cette lumière dans tout ton champ énergétique
+ - Répète 13 fois, en rythme avec le son 963 Hz
+
+Invocation sacrée :
+Par la lumière du Soleil et les eaux de Neptune, J’appelle la vibration sacrée de la Sagesse. Que l’améthyste m’élève, que le son m’ouvre, Que ma conscience se souvienne de l’origine. Je suis un canal vivant de vérité, Et je reçois les enseignements du ciel. Ainsi soit-il.
+
+Connexion vibratoire :
+ - Place la carte Sagesse au sommet de ton autel ou sur ton front
+ - Dispose les pierres en étoile autour de toi ou de ton espace sacré
+ - Visualise une spirale blanche-violette tournant au-dessus de ta tête
+
+Intégration :
+ - Bois une infusion céleste (lavande, lotus, bleuet)
+ - Note dans ton journal : “Je suis en lien avec la sagesse universelle.”
+ - Laisse la carte sur ton autel pendant 3 jours`
+}
+];
+
+    /* ---- état pour empêcher répétition ---- */
+    const usedArc = new Set();
+    const usedVib = new Set();
+
+    // historique
+    const history = [];
+
+    // helpers
+    function drawFromDeck(deck, usedSet) {
+      if (usedSet.size >= deck.length) {
+        alert("Deck épuisé — cliquez sur 'Reshuffle' pour remettre les cartes.");
+        return null;
       }
-
-      const arcIndex = Math.floor(Math.random() * arcDeck.length);
-      const vibIndex = Math.floor(Math.random() * vibDeck.length);
-
-      const arc = arcDeck.splice(arcIndex, 1)[0];
-      const vib = vibDeck.splice(vibIndex, 1)[0];
-
-      // Show result
-      document.getElementById("result").innerHTML = `
-        <h3>${arc.name}</h3>
-        <img src="${arc.image}" alt="${arc.name}">
-        <h3>${vib.name}</h3>
-        <img src="${vib.image}" alt="${vib.name}">
-      `;
-
-      // Save to history
-      history.push({ arc, vib });
-      updateHistory();
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * deck.length);
+      } while (usedSet.has(idx));
+      usedSet.add(idx);
+      return { card: deck[idx], index: idx };
     }
 
-    function shuffleDecks() {
-      arcDeck = [...fullArcDeck];
-      vibDeck = [...fullVibDeck];
-      alert("Decks reshuffled!");
+    function showPreview(cardObj, typeLabel) {
+      const preview = document.getElementById('cardPreview');
+      const img = document.getElementById('previewImg');
+      const name = document.getElementById('previewName');
+      const type = document.getElementById('previewType');
+
+      img.src = cardObj.image;
+      img.alt = cardObj.name;
+      name.textContent = cardObj.name;
+      type.textContent = typeLabel;
+      preview.style.display = 'flex';
+
+      // clicking preview opens modal
+      img.onclick = () => openModal(cardObj);
+      name.onclick = () => openModal(cardObj);
     }
 
-    function updateHistory() {
-      const list = document.getElementById("historyList");
-      list.innerHTML = "";
-      history.forEach((draw, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>Draw ${index + 1}:</strong>
-          ${draw.arc.name} <img src="${draw.arc.image}">
-          | ${draw.vib.name} <img src="${draw.vib.image}">
-        `;
-        list.appendChild(li);
+    function openModal(cardObj) {
+      const modal = document.getElementById('modal');
+      document.getElementById('modalImage').src = cardObj.image;
+      document.getElementById('modalImage').alt = cardObj.name;
+      document.getElementById('modalTitle').textContent = cardObj.name;
+      document.getElementById('modalDescription').textContent = cardObj.description;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+    }
+
+    function addToHistory(cardObj, typeLabel) {
+      history.unshift({ card: cardObj, type: typeLabel, time: new Date().toLocaleString() });
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const ul = document.getElementById('historyList');
+      ul.innerHTML = '';
+      history.forEach((entry, i) => {
+        const li = document.createElement('li');
+        li.className = 'historyItem';
+        li.title = `${entry.card.name} — ${entry.time}`;
+        li.innerHTML = `<img src="${entry.card.image}" alt="${entry.card.name}"><div class="hmeta"><strong>${entry.card.name}</strong><small>${entry.type} · ${entry.time}</small></div>`;
+        li.onclick = () => openModal(entry.card);
+        ul.appendChild(li);
       });
     }
 
-    function exportHistory() {
-      let text = "Arc,Vib\n";
-      history.forEach(draw => {
-        text += `${draw.arc.name},${draw.vib.name}\n`;
-      });
+    // actions
+    document.getElementById('btnDrawArc').addEventListener('click', () => {
+      const res = drawFromDeck(arcCards, usedArc);
+      if (!res) return;
+      const { card } = res;
+      showPreview(card, 'Arc');
+      addToHistory(card, 'Arc');
+      openModal(card);
+    });
 
-      const blob = new Blob([text], { type: "text/csv" });
-      cons
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    margin-bottom: 20px;
-  }
-  button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  #result img {
-    display: block;
-    margin: 10px auto;
-    max-width: 320px;  /* 🔥 bigger card images */
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
-  #history {
-    margin-top: 20px;
-    text-align: left;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-  #history ul {
-    list-style: none;
-    padding: 0;
-  }
-  #history li {
-    margin: 10px 0;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-  }
-  #history img {
-    width: 60px;  /* 🔥 bigger thumbnails in history */
-    vertical-align: middle;
-    border-radius: 6px;
-    margin-left: 5px;
-  }
-</style>
+    document.getElementById('btnDrawVib').addEventListener('click', () => {
+      const res = drawFromDeck(vibCards, usedVib);
+      if (!res) return;
+      const { card } = res;
+      showPreview(card, 'Vib');
+      addToHistory(card, 'Vib');
+      openModal(card);
+    });
+
+    document.getElementById('btnReshuffle').addEventListener('click', () => {
+      usedArc.clear();
+      usedVib.clear();
+      alert('Decks remis. Les cartes peuvent être tirées à nouveau (historique conservé).');
+    });
+
+    // modal close handlers
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('modal');
+      if (e.target === modal) closeModal();
+    });
+
+    // keyboard ESC to close
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // initial render (history vide)
+    renderHistory();
+  </script>
+    <script>
+        lucide.createIcons();
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function initCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.lineCap = 'round'; ctx.lineWidth = 3;
+        }
+
+        canvas.onmousedown = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); };
+        canvas.onmousemove = (e) => { 
+            if(drawing) { 
+                ctx.strokeStyle = document.getElementById('color').value;
+                ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); 
+            } 
+        };
+        window.onmouseup = () => drawing = false;
+
+        // TEXTE AU DOUBLE CLIC
+        canvas.ondblclick = (e) => {
+            const text = prompt("Écrivez votre mot :");
+            if (text) {
+                ctx.font = "24px Delius, cursive";
+                ctx.fillStyle = document.getElementById('color').value;
+                ctx.fillText(text, e.offsetX, e.offsetY);
+            }
+        };
+
+        // IMPORT IMAGE
+        document.getElementById('imageLoader').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, img.width, img.height, (canvas.width - img.width*ratio)/2, (canvas.height - img.height*ratio)/2, img.width*ratio, img.height*ratio);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        let journalData = JSON.parse(localStorage.getItem('my1prayer_data')) || {};
+        const today = new Date().toISOString().split('T')[0];
+
+        function saveData() {
+            if(!journalData[today]) journalData[today] = {};
+            journalData[today].prayer = document.getElementById('prayerText').value;
+            localStorage.setItem('my1prayer_data', JSON.stringify(journalData));
+        }
+
+        function setMood(mood, el) {
+            document.querySelectorAll('.mood-btn').forEach(m => m.classList.remove('active-mood'));
+            el.classList.add('active-mood');
+            if(!journalData[today]) journalData[today] = {};
+            journalData[today].mood = mood;
+            localStorage.setItem('my1prayer_data', JSON.stringify(journalData));
+            updateHistory();
+        }
+
+        function updateHistory() {
+            const historyDiv = document.getElementById('weeklyHistory');
+            historyDiv.innerHTML = '';
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                const dateKey = d.toISOString().split('T')[0];
+                const dayName = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+                const mood = journalData[dateKey]?.mood || '•';
+                historyDiv.innerHTML += `<div class="p-2 border rounded-xl bg-white/50 text-center ${dateKey === today ? 'border-amber-400 bg-amber-50' : 'border-transparent'}"><div class="text-[8px] font-bold uppercase text-indigo-300">${dayName}</div><div class="text-lg">${mood}</div></div>`;
+            }
+        }
+
+        function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+        window.onload = () => { initCanvas(); updateHistory(); };
+    </script>
+</body>
+</html>
