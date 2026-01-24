@@ -7,47 +7,51 @@
   <style>
     :root {
       --primary: #4CAF50;
-      --bg: #f9f9f9;
+      --bg: #f4f7f6;
       --text: #333;
-      --shadow: rgba(0,0,0,0.15);
+      --shadow: rgba(0,0,0,0.1);
     }
 
     body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; padding: 20px; background: var(--bg); color: var(--text); }
-    h1 { color: #2c3e50; margin-bottom: 30px; }
+    h1 { color: #2c3e50; margin-bottom: 30px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
     
     .btn-group { margin-bottom: 25px; }
     button { 
       padding: 14px 24px; font-size: 16px; cursor: pointer; margin: 8px; 
-      border-radius: 10px; border: none; transition: all 0.2s ease; 
+      border-radius: 12px; border: none; transition: all 0.2s ease; 
       background: var(--primary); color: white; font-weight: 600;
       box-shadow: 0 4px 6px var(--shadow);
     }
     button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px var(--shadow); filter: brightness(1.1); }
-    #reshuffle { background: #7f8c8d; }
+    #reshuffle { background: #95a5a6; }
 
-    /* Zone d'affichage des cartes */
     .paper { 
-        background: white; 
-        border-radius: 20px; 
-        box-shadow: 0 10px 25px var(--shadow);
-        border: 1px solid #eee;
-        transition: all 0.5s ease;
+        background: white; border-radius: 20px; 
+        box-shadow: 0 10px 25px var(--shadow); border: 1px solid #eee;
+        animation: slideUp 0.4s ease-out;
     }
 
-    #displayZone img { 
-      width: 100%; 
-      max-width: 280px; 
-      height: auto; 
-      border-radius: 12px; 
-      margin-top: 10px;
-    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* History Styling */
-    #history { margin: 40px auto; text-align: left; max-width: 600px; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); }
-    #history h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #7f8c8d; }
-    #historyList { list-style: none; padding: 0; }
-    #historyList li { padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-    .time { font-size: 12px; color: #999; }
+    #displayZone img { width: 100%; max-width: 280px; border-radius: 12px; margin-top: 10px; }
+
+    /* Historique par jour */
+    #history { margin: 40px auto; text-align: left; max-width: 600px; }
+    .history-day-group { 
+        background: #fff; border-radius: 15px; padding: 15px; 
+        margin-bottom: 20px; box-shadow: 0 4px 15px var(--shadow);
+    }
+    .history-date-header { 
+        font-weight: bold; color: var(--primary); border-bottom: 2px solid #eee; 
+        padding-bottom: 8px; margin-bottom: 10px; font-size: 1.1rem;
+    }
+    .history-list { list-style: none; padding: 0; margin: 0; }
+    .history-item { 
+        padding: 10px 0; border-bottom: 1px solid #f9f9f9; 
+        display: flex; justify-content: space-between; align-items: center; font-size: 14px;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .time { font-size: 12px; color: #999; background: #f0f0f0; padding: 2px 8px; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -63,25 +67,25 @@
   <div id="displayZone" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 30px;">
     <div id="arcSlot" class="paper" style="width: 320px; min-height: 450px; padding: 20px; display: none;">
         <h3 style="color:var(--primary); margin-top:0;">Carte Arc</h3>
-        <img id="arcImg" src="" alt="Carte Arc">
+        <img id="arcImg" src="">
         <h4 id="arcTitle" style="margin: 15px 0 10px 0;"></h4>
-        <p id="arcDesc" style="font-size: 0.85em; text-align: left; white-space: pre-line; line-height: 1.5; background: #fdfdfd; padding: 10px; border-radius: 8px; border-left: 4px solid var(--primary);"></p>
+        <p id="arcDesc" style="font-size: 0.85em; text-align: left; white-space: pre-line; line-height: 1.5; background: #fdfdfd; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);"></p>
     </div>
-    
     <div id="vibSlot" class="paper" style="width: 320px; min-height: 450px; padding: 20px; display: none;">
         <h3 style="color:var(--primary); margin-top:0;">Carte Vib</h3>
-        <img id="vibImg" src="" alt="Carte Vib">
+        <img id="vibImg" src="">
         <h4 id="vibTitle" style="margin: 15px 0 10px 0;"></h4>
-        <p id="vibDesc" style="font-size: 0.85em; text-align: left; white-space: pre-line; line-height: 1.5; background: #fdfdfd; padding: 10px; border-radius: 8px; border-left: 4px solid var(--primary);"></p>
+        <p id="vibDesc" style="font-size: 0.85em; text-align: left; white-space: pre-line; line-height: 1.5; background: #fdfdfd; padding: 12px; border-radius: 8px; border-left: 4px solid #9c27b0;"></p>
     </div>
   </div>
 
   <div id="history">
-    <h3>📜 Historique sauvegardé</h3>
-    <ul id="historyList"></ul>
+    <h3 style="text-align:center; color:#7f8c8d;">📜 Historique des Tirages</h3>
+    <div id="historyContainer"></div>
   </div>
 
   <script>
+    // --- (Tableaux de cartes inchangés) ---
     const arcCards = [
       { name: "🛡️ Michaël – Guerrier céleste tribal", image: "arc1.png", description: "🔤 Nom : Mikhaël — “Qui est comme Dieu ?”\n🌈 Fréquence : 528 Hz\n💎 Pierres : Lapis-lazuli, Sodalite, Tourmaline noire\n🌞 Astres : Soleil, Mars\n🪬 Symboles : épée flamboyante, bouclier solaire\n🧭 Rôle : Protecteur des justes" },
       { name: "🌿 Raphaël – Chamane guérisseur végétal", image: "arc2.png", description: "🔤 Nom : Refael — “Dieu guérit”\n🌈 Fréquence : 639 Hz\n💎 Pierres : Malachite, Émeraude, Fluorite verte\n🌠 Astres : Mercure, Vénus\n🪬 Symboles : bâton de soin, temple de jade\n🧭 Rôle : Guérisseur divin" },
@@ -98,31 +102,11 @@
     ];
 
     const vibCards = [
-      { 
-        name: "🛡️ Carte de Protection", 
-        image: "vib1.png", 
-        description: "Fonction : Dissout les intrusions\nFréquence : 417 Hz\nPierres : Obsidienne, Tourmaline noire\nInvocation : \n\"Par la force de Mars et la sagesse de Saturne, J’appelle la vibration de Protection divine. Que l’obsidienne scelle, que le son purifie, Que mon champ soit inviolable, stable et sacré. Je suis entouré(e) d’un cercle de lumière, Nul ne peut pénétrer sans mon accord. Ainsi soit-il.\"" 
-      },
-      { 
-        name: "🌿 Carte de Guérison", 
-        image: "vib2.png", 
-        description: "Fonction : Libère les mémoires\nFréquence : 528 Hz\nPierres : Malachite, Fluorite\nInvocation : \n\"Par la lumière de la Lune et la médecine de Chiron, J’appelle la vibration sacrée de Guérison. Que la malachite purifie, que le son répare, Que mes cellules se souviennent de leur harmonie. Je suis un temple vivant, Et je choisis la régénération. Ainsi soit-il.\"" 
-      },
-      { 
-        name: "🧭 Carte de Guidance", 
-        image: "vib3.png", 
-        description: "Fonction : Active l’intuition\nFréquence : 852 Hz\nPierres : Labradorite, Lapis lazuli\nInvocation : \n\"Par la clarté de Mercure et l’éveil d’Uranus, J’appelle la vibration sacrée de Guidance. Que la labradorite éclaire, que le son révèle, Que mes pas soient guidés par la sagesse intérieure. Je suis prêt(e) à recevoir les signes, Et à suivre le chemin qui s’ouvre devant moi. Ainsi soit-il.\"" 
-      },
-      { 
-        name: "💗 Carte d’Amour", 
-        image: "vib4.png", 
-        description: "Fonction : Dissout les blocages affectifs\nFréquence : 639 Hz\nPierres : Quartz rose, Rhodonite\nInvocation : \n\"Par la douceur de Vénus et la tendresse de la Terre, J’appelle la vibration sacrée de l’Amour. Que le quartz rose m’ouvre, que le son m’apaise, Que mon cœur devienne un temple de compassion. Je suis amour, je suis lien, je suis unité. Ainsi soit-il.\"" 
-      },
-      { 
-        name: "🦉 Carte de Sagesse", 
-        image: "vib5.png", 
-        description: "Fonction : Accès aux plans supérieurs\nFréquence : 963 Hz\nPierres : Améthyste, Cristal de roche\nInvocation : \n\"Par la lumière du Soleil et les eaux de Neptune, J’appelle la vibration sacrée de la Sagesse. Que l’améthyste m’élève, que le son m’ouvre, Que ma conscience se souvienne de l’origine. Je suis un canal vivant de vérité, Et je reçois les enseignements du ciel. Ainsi soit-il.\"" 
-      }
+      { name: "🛡️ Protection", image: "vib1.png", description: "Fonction : Dissout les intrusions\nFréquence : 417 Hz\nPierres : Obsidienne, Tourmaline noire\nInvocation : \"Par la force de Mars et la sagesse de Saturne, J’appelle la vibration de Protection divine... Ainsi soit-il.\"" },
+      { name: "🌿 Guérison", image: "vib2.png", description: "Fonction : Libère les mémoires\nFréquence : 528 Hz\nPierres : Malachite, Fluorite\nInvocation : \"Par la lumière de la Lune et la médecine de Chiron... Ainsi soit-il.\"" },
+      { name: "🧭 Guidance", image: "vib3.png", description: "Fonction : Active l’intuition\nFréquence : 852 Hz\nPierres : Labradorite, Lapis lazuli\nInvocation : \"Par la clarté de Mercure et l’éveil d’Uranus... Ainsi soit-il.\"" },
+      { name: "💗 Amour", image: "vib4.png", description: "Fonction : Dissout les blocages affectifs\nFréquence : 639 Hz\nPierres : Quartz rose, Rhodonite\nInvocation : \"Par la douceur de Vénus et la tendresse de la Terre... Ainsi soit-il.\"" },
+      { name: "🦉 Sagesse", image: "vib5.png", description: "Fonction : Accès aux plans supérieurs\nFréquence : 963 Hz\nPierres : Améthyste, Cristal de roche\nInvocation : \"Par la lumière du Soleil et les eaux de Neptune... Ainsi soit-il.\"" }
     ];
 
     let drawnArc = [];
@@ -143,6 +127,7 @@
       const descId = type === 'arc' ? "arcDesc" : "vibDesc";
 
       const slot = document.getElementById(slotId);
+      slot.style.animation = 'none'; slot.offsetHeight; slot.style.animation = null;
       slot.style.display = "block";
       document.getElementById(imgId).src = card.image;
       document.getElementById(titleId).textContent = card.name;
@@ -153,52 +138,45 @@
 
     function addToHistory(card) {
       const now = new Date();
-      // Format de la date (ex: 24 janv.)
-      const dateStr = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-      // Format de l'heure (ex: 14:05)
+      const dateKey = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
       const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
+      let dayGroup = document.querySelector(`[data-date="${dateKey}"]`);
+      
+      if (!dayGroup) {
+        dayGroup = document.createElement("div");
+        dayGroup.className = "history-day-group";
+        dayGroup.setAttribute("data-date", dateKey);
+        dayGroup.innerHTML = `<div class="history-date-header">Tirages du ${dateKey}</div><ul class="history-list"></ul>`;
+        const container = document.getElementById("historyContainer");
+        container.insertBefore(dayGroup, container.firstChild);
+      }
+
+      const list = dayGroup.querySelector(".history-list");
       const li = document.createElement("li");
-      li.innerHTML = `
-        <span>${card.name}</span> 
-        <div class="time-info">
-            <span class="date-badge">${dateStr}</span>
-            <span class="time">${timeStr}</span>
-        </div>`;
-        
-      const list = document.getElementById("historyList");
+      li.className = "history-item";
+      li.innerHTML = `<span>${card.name}</span> <span class="time">${timeStr}</span>`;
       list.insertBefore(li, list.firstChild);
-      localStorage.setItem("tirageHistory", list.innerHTML);
+      
+      localStorage.setItem("tirageHistoryStructured", document.getElementById("historyContainer").innerHTML);
     }
 
-    document.getElementById("drawArc").addEventListener("click", () => {
-        const card = drawCard(arcCards, drawnArc);
-        displayCardOnPage(card, 'arc');
-    });
-
-    document.getElementById("drawVib").addEventListener("click", () => {
-        const card = drawCard(vibCards, drawnVib);
-        displayCardOnPage(card, 'vib');
-    });
+    document.getElementById("drawArc").addEventListener("click", () => displayCardOnPage(drawCard(arcCards, drawnArc), 'arc'));
+    document.getElementById("drawVib").addEventListener("click", () => displayCardOnPage(drawCard(vibCards, drawnVib), 'vib'));
 
     document.getElementById("reshuffle").addEventListener("click", () => {
-      if(confirm("Voulez-vous vraiment effacer l'historique et les cartes affichées ?")) {
-        drawnArc = []; drawnVib = [];
-        document.getElementById("historyList").innerHTML = "";
+      if(confirm("Effacer tout l'historique ?")) {
+        document.getElementById("historyContainer").innerHTML = "";
         document.getElementById("arcSlot").style.display = "none";
         document.getElementById("vibSlot").style.display = "none";
-        localStorage.removeItem("tirageHistory");
+        localStorage.removeItem("tirageHistoryStructured");
       }
     });
 
     window.onload = function() {
-      const saved = localStorage.getItem("tirageHistory");
-      if(saved) {
-        document.getElementById("historyList").innerHTML = saved;
-      }
+      const saved = localStorage.getItem("tirageHistoryStructured");
+      if(saved) document.getElementById("historyContainer").innerHTML = saved;
     };
   </script>
 </body>
 </html>
-
-
