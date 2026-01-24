@@ -31,30 +31,26 @@
       background: rgba(0,0,0,0.85); justify-content:center; align-items:center; 
       z-index:1000; backdrop-filter: blur(3px); 
     }
+    
     #modalContent { 
-  background:#fff; 
-  padding: 30px; 
-  border-radius: 20px; 
-  max-width: 600px;      /* Élargi pour accueillir une plus grande image */
-  width: 95%; 
-  max-height: 90vh; 
-  overflow-y: auto; 
-}
+      background:#fff; padding: 30px; border-radius: 20px; 
+      max-width: 600px; width: 95%; max-height: 90vh; 
+      overflow-y: auto; position: relative; text-align: left;
+      animation: fadeIn 0.3s ease;
+    }
+
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     
     #modal img { 
-  width: 100%;           /* Utilise toute la largeur du conteneur */
-  max-width: 350px;      /* Augmente cette valeur pour agrandir l'ange */
-  height: auto; 
-  display: block; 
-  margin: 0 auto 20px auto; 
-  border-radius: 12px; 
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
-}
+      width: 100%; max-width: 350px; height: auto; 
+      display: block; margin: 0 auto 20px auto; 
+      border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+    }
+
     .closeModal { position: absolute; top: 15px; right: 20px; cursor:pointer; font-size:32px; color: #bbb; }
     .closeModal:hover { color: #333; }
     
-    #modalTitle { text-align: center; color: #2c3e50; margin-bottom: 15px; }
+    #modalTitle { text-align: center; color: #2c3e50; margin-bottom: 15px; font-size: 1.5rem; }
     #modalDescription { 
       white-space: pre-line; line-height: 1.6; font-size: 15px; 
       background: #fcfcfc; padding: 15px; border-left: 5px solid var(--primary); border-radius: 5px;
@@ -88,7 +84,7 @@
   </div>
 
   <div id="history">
-    <h3>📜 Historique des tirages</h3>
+    <h3>📜 Historique sauvegardé</h3>
     <ul id="historyList"></ul>
   </div>
 
@@ -108,7 +104,7 @@
       { name: "✨ Métatron – Maître géomètre", image: "arc12.png", description: "🔤 Nom : Métatron — “Trône de Dieu”\n🌈 Fréquence : 999 Hz\n💎 Pierres : Tourmaline melon, Platine\n🌠 Astres : Pléiades, Sirius\n🪬 Symboles : cube de Métatron, vortex\n🧭 Rôle : Ascension et géométrie divine" }
     ];
 
-const vibCards = [
+    const vibCards = [
       { 
         name: "🛡️ Carte de Protection", 
         image: "vib1.png", 
@@ -184,9 +180,11 @@ Et je reçois les enseignements du ciel.
 Ainsi soit-il."` 
       }
     ];
+
     let drawnArc = [];
     let drawnVib = [];
 
+    // Gestion du tirage
     function drawCard(deck, drawnArray) {
       if (drawnArray.length === deck.length) drawnArray.length = 0;
       let remaining = deck.map((_, i) => i).filter(i => !drawnArray.includes(i));
@@ -195,6 +193,7 @@ Ainsi soit-il."`
       return deck[randomIndex];
     }
 
+    // Affichage de la carte
     function showCard(card) {
       document.getElementById("modalImage").src = card.image;
       document.getElementById("modalTitle").textContent = card.name;
@@ -206,22 +205,36 @@ Ainsi soit-il."`
       li.innerHTML = `<span>${card.name}</span> <span class="time">${timeStr}</span>`;
       const list = document.getElementById("historyList");
       list.insertBefore(li, list.firstChild);
+
+      // Sauvegarde dans le navigateur
+      localStorage.setItem("tirageHistory", list.innerHTML);
     }
 
+    // Écouteurs de clics
     document.getElementById("drawArc").addEventListener("click", () => showCard(drawCard(arcCards, drawnArc)));
     document.getElementById("drawVib").addEventListener("click", () => showCard(drawCard(vibCards, drawnVib)));
+    
     document.getElementById("reshuffle").addEventListener("click", () => {
-      drawnArc = []; drawnVib = [];
-      document.getElementById("historyList").innerHTML = "";
-      alert("Historique et decks réinitialisés !");
+      if(confirm("Voulez-vous vraiment effacer l'historique ?")) {
+        drawnArc = []; drawnVib = [];
+        document.getElementById("historyList").innerHTML = "";
+        localStorage.removeItem("tirageHistory");
+        alert("Réinitialisé !");
+      }
     });
 
+    // Fermeture modal
     const closeM = () => document.getElementById("modal").style.display = "none";
     document.querySelector(".closeModal").addEventListener("click", closeM);
     window.addEventListener("click", (e) => { if(e.target.id === "modal") closeM(); });
+
+    // Charger l'historique au démarrage
+    window.onload = function() {
+      const saved = localStorage.getItem("tirageHistory");
+      if(saved) {
+        document.getElementById("historyList").innerHTML = saved;
+      }
+    };
   </script>
 </body>
 </html>
-
-
-
